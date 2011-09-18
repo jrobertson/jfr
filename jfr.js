@@ -13,7 +13,7 @@ function get(index){ return this.array[index]; }
 
 function reverse(){  return this.array.reverse();}
 function sort(){  return this.array.sort();}
-function to_a(){  return this.array;}
+function array_to_a(){  return this.array;}
 
 function rbArray(i, obj){
 
@@ -38,11 +38,24 @@ function rbArray(i, obj){
   this.each = each;
   this.reverse = reverse;
   this.sort = sort;
-  this.to_a = to_a;
+  this.to_a = array_to_a;
 }
 
-function set(v) { this.string = v; }
-function get()  { return this.string; }
+function to_a(){
+  var a = new rb.Array();
+  for (i = this.x1; i <= this.x2; i++) {a.set(i,i);}
+  return a;
+}
+
+function rbRange(x1,x2){
+
+  this.x1 = x1;
+  this.x2 = x2;
+  this.to_a = to_a;
+
+}
+function string_set(v) { this.string = v; }
+function string_get()  { return this.string; }
 function upcase()   { return this.string.toUpperCase(); }
 function downcase() { return this.string.toLowerCase(); }
 
@@ -74,21 +87,61 @@ function gsub(rawPattern, newString) {
   return s.replace(regex, newString);
 }
 
-function to_s(){return this.string;}
+function string_range(x1, x2) {
+
+  s = this.string;
+  s.slice(x1,x2);
+
+  if (x2 != -1)
+    return s.slice(x1,x2+1);
+  else
+    return s.slice(x1)
+}
+
+function string_range3(x1, x2) {
+
+  s = this.string;
+  s.slice(x1,x2);
+  
+  if (x2 != -1)
+    return s.slice(x1,x2);
+  else
+    return s.slice(x1)
+}
+
+
+function string_slice(x1,x2){
+
+  s = this.string;
+  if (typeof x1 == 'undefined') return null
+
+  if (typeof x2 == 'undefined') {
+    return s.slice(x1, x1+1);
+  }
+  else {
+    if (x2 > x1) return s.slice(x1, x2);
+    else return x2 < 0 ? null : ''
+  }
+}
+
+function string_to_s(){return this.string;}
 
 function rbString(s){
 
   this.string = String(s);
-  this.length = 0;
-  this.set = set;
-  this.get = get;
+  this.length = this.string.length;
+  this.set = string_set;
+  this.get = string_get;
   this.gsub = gsub;
   this.upcase = upcase;
   this.downcase = downcase;
+  this.range = string_range;
+  this.range3 = string_range3;
+  this.slice = slice;
   this.split = split;
   this.sub = sub;
-  this.to_s = to_s;
+  this.to_s = string_to_s;
 }
 
-rb = {  Array: rbArray, String: rbString}
+rb = {  Array: rbArray, String: rbString, Range: rbRange}
 
