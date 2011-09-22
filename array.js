@@ -32,7 +32,7 @@ function array_each(f){
 
 function array_first(){return this.array[0];}
 function array_flatten(){return 'still to do!';}
-
+function array_get(index){ return this.array[index]; }
 function array_last(){return this.array[this.array.length - 1];}
 
 function array_include(val){
@@ -48,7 +48,7 @@ function array_inject(arg, f){
 
   // the arg is the datatype    
   rtype = {String: arg, Object: new rb.Hash, Array: '', Number: arg};
-  result = rtype[functionName(arg)];
+  result = rtype[functionName(arg).to_s()];
   this.each(function(x){
     result = f(result, x);
   });
@@ -164,19 +164,7 @@ function array_slice_p(x1,x2){
 }
 
 function array_sort(){  return new rb.Array(this.array.sort());}
-function array_unshift(){
-  for (x in arguments){this.array.unshift(arguments[x]);}  
-  this.length = this.array.length; 
-}
 
-function array_with_index(f){
-  var a = [];
-  for (var i = 0; i < this.array.length; i++) {a[i] = f(this.array[i], i);}
-  result = this;
-  if (this.last_method == 'map') result = a;
-  this.last_method = '';
-  return result;
-}
 
 function array_pop(count){
 
@@ -200,16 +188,28 @@ function array_push(){
   this.length = this.array.length;
 }
 
+function reverse(){  return this.array.reverse();}
+
+function array_unshift(){
+  for (x in arguments){this.array.unshift(arguments[x]);}  
+  this.length = this.array.length; 
+}
+
 function array_set(index, value){
   this.array[index] = value;
   this.length = this.array.length;
 }
 
-function array_get(index){ return this.array[index]; }
-
-function reverse(){  return this.array.reverse();}
-
 function array_to_a(){  return this.array;}
+
+function array_with_index(f){
+  var a = [];
+  for (var i = 0; i < this.array.length; i++) {a[i] = f(this.array[i], i);}
+  result = this;
+  if (this.last_method == 'map') result = a;
+  this.last_method = '';
+  return result;
+}
 
 function rbArray(i, obj){
 
@@ -244,7 +244,7 @@ function rbArray(i, obj){
      
   if (typeof i == 'undefined') this.array = new Array;
   else {
-    if (functionName(i) == 'Array' || functionName(i) == 'NodeList') {
+    if (functionName(i).to_s() == 'Array' || functionName(i).to_s() == 'NodeList') {
       if (typeof obj != 'undefined') {        
         this.array = new Array;
         for (var j = 0; j < i - 1; j++) { this.array[j] = obj;}

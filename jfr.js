@@ -14,92 +14,6 @@ function rbRange(x1,x2){
   this.to_a = to_a;
 
 }
-function string_set(v) { this.string = v; }
-function string_get()  { return this.string; }
-function upcase()   { return this.string.toUpperCase(); }
-function downcase() { return this.string.toLowerCase(); }
-
-function split(pattern){
-  return this.string.split(pattern);
-}
-
-function sub(pattern, newString) {
-  s = new String(this.string);
-  return s.replace(pattern, newString);
-}
-
-
-function gsub(rawPattern, newString) {
-
-  s = new String(this.string);
-  pattern = rawPattern;
-
-  if (functionName(rawPattern) == 'RegExp') {
-    pattern = rawPattern.toString().slice(1, -1);
-  }
-
-  regex = new RegExp(pattern, 'g');
-  return s.replace(regex, newString);
-}
-
-function string_range(x1, x2) {
-
-  var s = this.string;
-  var r = '';
-
-  if (x2 != -1)
-    r = s.slice(x1,x2+1);
-  else
-    r = s.slice(x1);
-    
-  return new rb.String(r);
-}
-
-function string_range3(x1, x2) {
-
-  var s = this.string;
-  s.slice(x1,x2);
-  
-  if (x2 != -1)
-    return s.slice(x1,x2);
-  else
-    return s.slice(x1);
-}
-
-
-function string_slice(x1,x2){
-
-  var s = this.string;
-  if (typeof x1 == 'undefined') return null
-
-  if (typeof x2 == 'undefined') {
-    return s.slice(x1, x1+1);
-  }
-  else {
-    if (x2 > x1) return s.slice(x1, x2);
-    else return x2 < 0 ? null : ''
-  }
-}
-
-function string_to_s(){return this.string;}
-
-function rbString(s){
-  
-  this.downcase = downcase;
-  this.get = string_get;
-  this.gsub = gsub;    
-  this.length = 0  
-  this.range = string_range;
-  this.range3 = string_range3;
-  this.set = string_set;
-  this.slice = string_slice;
-  this.split = split;
-  this.sub = sub;
-  this.to_s = string_to_s;
-  this.upcase = upcase;  
-  this.string = String(s);
-  this.length = this.string.length;
-}
 
 function enum_each(f){  for(x in this.enumerable) f(x); }
 
@@ -132,15 +46,14 @@ function functionName(object){
 
 function rbType(datatype){
   rtype = {String: 'String', Array: 'Array', Number: 'Fixnum'};
-  return rtype[functionName(datatype)];  
+  return rtype[functionName(datatype).to_s()];  
 }
 
-rb = {  Array: rbArray, String: rbString, Range: rbRange, 
-        Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
-        Object: rbObject
-     }
-
 // Ruby Object methods
+
+function object_is_a(name){
+  return this.class().to_s() == name
+}
 
 function object_methods(){
   var a = [];
@@ -148,25 +61,58 @@ function object_methods(){
   return new rb.Array(a);
 }
 
-function object_class(){ functionName(this).range(2,-1); }
+function object_respond_to(method){
+  return this.public_methods().include(method);
+}
+
+function object_class(){ return functionName(this).range(2,-1); }
 
 function rbObject(){
+  this.is_a = object_is_a;
   this.methods = object_methods;
   this.public_methods = object_methods;
+  this.respond_to = object_respond_to;
   this.class = object_class;
 }
+
+function matchdata_captures(){
+  return this.rb_array; 
+}
+
+function rbMatchData(a){
+  this.regexp = null;
+  this.captures = matchdata_captures;
+  this.post_match = '';  
+  this.pre_match = '';  
+  this.rb_array = a;  
+}
+
+rb = {  Array: rbArray, String: rbString, Range: rbRange, 
+        Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
+        Object: rbObject, MatchData: rbMatchData
+     }
 
 // add the object methods into each object
 
 // clone the rb object list and reject Object
-/*
-for (objName in rb) {
-  rb[objName].prototype['methods'] = methods;
-  rb[objName].prototype['public_methods'] = methods;
-}
-*/
+rbList = new rb.Hash(rb)
+rbList.delete('Object');
+
+rbList.each(function(class_key,v) {
+  new rb.Hash(new rb.Object).each(function(method_key, method_val){
+    rb[class_key].prototype[method_key] = method_val;
+  });
+});
+
+
 function puts(s){console.log(s);}
 
-var a = new rb.Array([3,5,7,2,78,1]);
-var h = new rb.Hash({fun: 'rwe', colour: 'rtf'})
-a.detect(function(x){ return x > 5;})
+//var a = new rb.Array([3,5,7,2,78,1]);
+//var h = new rb.Hash({fun: 'rwe', colour: 'rtf'});
+//h.values_at(['fun', 'colour']);
+//a.detect(function(x){ return x > 5;})
+
+//h.reject(function(k,v){ return v == 'rtf';});
+//h.delete('fun');
+//s = new rb.String("food foraging");
+//s.scan(/fo/);
