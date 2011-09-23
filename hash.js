@@ -142,6 +142,7 @@ function rbHash(raw_h){
   this.reject_p = hash_reject_p;
   this.set = hash_set;
   this.shift = hash_shift;
+  this.update = hash_merge_p;
   this.values = hash_values;
   this.values_at = hash_values_at;
   this.length = 0;

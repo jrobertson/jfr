@@ -3,7 +3,6 @@
 
 function array_delete_at(i){ 
   var r = this.array.splice(i,1)[0];
-  this.length = this.array.length;
   return r;
 }
 
@@ -34,6 +33,7 @@ function array_first(){return this.array[0];}
 function array_flatten(){return 'still to do!';}
 function array_get(index){ return this.array[index]; }
 function array_last(){return this.array[this.array.length - 1];}
+function array_length(){return this.array.length;}
 
 function array_include(val){
   return this.array.indexOf(val) >= 0
@@ -80,6 +80,13 @@ function array_map(f){
 function array_max(){ return this.sort().last();}
 function array_min(){ return this.sort().first();}
 
+function array_partition(f){
+  
+  var a_true = new rb.Array, a_false = new rb.Array;
+  this.each(function(x){ (f(x) == true) ? a_true.push(x) : a_false.push(x); });
+  return new rb.Array([a_true, a_false]);
+}
+
 function array_range(x1,x2){
   
   var a = this.array;
@@ -120,7 +127,6 @@ function array_shift(count){
 
   }
   
-  this.length = this.array.length;
   return result;  
 }
 
@@ -148,14 +154,12 @@ function array_slice_p(x1,x2){
     result = this.slice(x1);
     //result = a.slice(x1, x1+1);
     this.array.splice(x1, x1+1)
-    this.length = this.array.length;
   }
   else {
     if (x2 > x1) {
       result= this.slice(x1, x2);
       //result = a.slice(x1, x1+x2);
       this.array.splice(x1, x1+x2);
-      this.length = this.array.length;
     }
     else return x2 < 0 ? null : ''
   }  
@@ -178,26 +182,22 @@ function array_pop(count){
     for (var i = 0; i < count; i++){a.push(this.array.pop());}
     result = new rbArray(a);
   }
-  
-  this.length = this.array.length;
+    
   return result;
 }
 
 function array_push(){
   for (var x in arguments){this.array.push(arguments[x]);}  
-  this.length = this.array.length;
 }
 
 function reverse(){  return this.array.reverse();}
 
 function array_unshift(){
   for (x in arguments){this.array.unshift(arguments[x]);}  
-  this.length = this.array.length; 
 }
 
 function array_set(index, value){
-  this.array[index] = value;
-  this.length = this.array.length;
+  this.array[index] = value;  
 }
 
 function array_to_a(){  return this.array;}
@@ -213,6 +213,7 @@ function array_with_index(f){
 
 function rbArray(i, obj){
 
+  this.at = array_get;
   this.delete_at = array_delete_at;
   this.detect = array_detect;
   this.each = array_each;  
@@ -222,11 +223,12 @@ function rbArray(i, obj){
   this.include = array_include;
   this.inject = array_inject;  
   this.join = array_join;
-  this.length = 0;
   this.last = array_last;
+  this.length = array_length;
   this.map = array_map;
   this.max = array_max;
   this.min = array_min;
+  this.partition = array_partition;
   this.pop = array_pop;
   this.push = array_push;  
   this.range = array_range;
@@ -255,7 +257,6 @@ function rbArray(i, obj){
       }
     }
     else this.array = new Array(i);
-  }
-  this.length = this.array.length;
+  }  
 }
 

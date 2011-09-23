@@ -22,6 +22,11 @@ function sub(pattern, newString) {
   return s.replace(pattern, newString);
 }
 
+function sub_p(pattern, newString) {
+  this.string = this.string.replace(pattern, newString);
+  return this;
+}
+
 function gsub(rawPattern, newString) {
 
   s = new String(this.string);
@@ -35,6 +40,8 @@ function gsub(rawPattern, newString) {
   return s.replace(regex, newString);
 }
 
+function string_length(){return this.string.length;}
+
 function string_match(rawPattern){
 
   if (functionName(rawPattern).to_s() == 'RegExp') {
@@ -45,9 +52,10 @@ function string_match(rawPattern){
   var rawMatch = this.string.match(regex);
   var aMatch = new rb.Array(rawMatch);
   var stringMatch = aMatch.shift();
-  var matchdata = new rb.MatchData(aMatch);  
+  var matchdata = new rb.MatchData(aMatch);
+  matchdata.string = stringMatch;
   matchdata.regexp = regex;
-  var rbString = new rb.String(this.string);
+  var rbString = new rb.String(stringMatch);
   
   matchdata.string = rbString;
   matchdata.pre_match = rawMatch['index'] > 0 ? 
@@ -55,6 +63,14 @@ function string_match(rawPattern){
   matchdata.post_match = rbString.range(rawMatch['index'] + 
   stringMatch.length, -1);
   return matchdata;
+}
+
+function string_sprintf(a){
+  a.each(function(x){
+    s.sub_p("%s", x);
+  });
+  return this;
+  
 }
 
 function string_range(x1, x2) {
@@ -81,8 +97,16 @@ function string_range3(x1, x2) {
     return s.slice(x1);
 }
 
-function string_regex(){
-  this.scan();
+function string_regex(pattern,index){
+  
+  var matchdata = this.match(pattern);
+  
+  if (typeof index == 'undefined'){
+    return matchdata.to_s();
+  }
+  else {
+    return matchdata.captures().at(index - 1);
+  }
 }
 
 function string_slice(x1,x2){
@@ -106,7 +130,6 @@ function rbString(s){
   this.downcase = downcase;
   this.get = string_get;
   this.gsub = gsub;    
-  this.length = 0;
   this.match = string_match;
   this.range = string_range;
   this.range3 = string_range3;
@@ -115,9 +138,11 @@ function rbString(s){
   this.set = string_set;
   this.slice = string_slice;
   this.split = split;
+  this.sprintf = string_sprintf;
   this.sub = sub;
+  this.sub_p = sub_p;
   this.to_s = string_to_s;
   this.upcase = upcase;  
   this.string = String(s);
-  this.length = this.string.length;
+  this.length = string_length;
 }

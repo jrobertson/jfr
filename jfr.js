@@ -75,21 +75,70 @@ function rbObject(){
   this.class = object_class;
 }
 
-function matchdata_captures(){
-  return this.rb_array; 
-}
+function matchdata_captures(){  return this.rb_array; }
+function matchdata_to_s(){ return this.string; }
+function matchdata_inspect(){ return this.class() + ' ' + this.string;}
 
 function rbMatchData(a){
   this.regexp = null;
   this.captures = matchdata_captures;
+  this.inspect = matchdata_inspect;
   this.post_match = '';  
-  this.pre_match = '';  
+  this.pre_match = '';
+  this.string = '';
+  this.to_s = matchdata_to_s;
   this.rb_array = a;  
+}
+
+function sec(){ return new Date().getSeconds(); }
+function min(){ return new Date().getMinutes(); }
+function hour(){ return new Date().getHours(); }
+function day(){ return new Date().getDay(); }
+function month(){ return new Date().getMonth(); }
+
+function now_to_a(){
+  return new rb.Array([sec(), min(), hour(), day(), month(), year(), wday()]);
+}
+
+function now_to_s(){
+  
+}
+
+function wday(){ return new Date().getUTCDay(); }
+function yday(){ return ''; }
+function year(){ return new Date().getFullYear(); }
+
+
+rbNow = {
+  wday: wday,
+  sec: sec,
+  min: min,
+  hour: hour,
+  day: day,
+  mday: day,
+  mon: month,
+  month: month,
+  to_a: now_to_a,
+  to_s: now_to_s,
+  year: year
+}
+
+function time_now(){
+  // the format we want 2011-09-23 16:45:51 +0100
+  /*var a = new rb.Array;
+  a.push(new Date().getFullYear();)*/
+  
+  return rbNow;
+}
+
+rbTime = {
+  now: time_now
+  
 }
 
 rb = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
-        Object: rbObject, MatchData: rbMatchData
+        Object: rbObject, MatchData: rbMatchData, Time: rbTime
      }
 
 // add the object methods into each object
@@ -105,6 +154,7 @@ rbList.each(function(class_key,v) {
 });
 
 
+function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 function puts(s){console.log(s);}
 
 //var a = new rb.Array([3,5,7,2,78,1]);
@@ -115,4 +165,12 @@ function puts(s){console.log(s);}
 //h.reject(function(k,v){ return v == 'rtf';});
 //h.delete('fun');
 //s = new rb.String("food foraging");
+//s.regex(/forag/);
 //s.scan(/fo/);
+
+
+//a = new rb.Array(['apple','grapes']);
+//var s = new rb.String("where %s  then %s");
+//s.sprintf(a);
+
+t = rb.Time.now();
