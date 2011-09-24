@@ -58,11 +58,11 @@ function array_inject(arg, f){
 function array_join(separator){
   
   if (typeof separator == 'undefined') {
-    var s = a.inject('',function(r,x){return r + x});
+    var s = this.inject('',function(r,x){return r + x});
     return new rb.String(s)
   }
   else {
-    var s = a.inject('',function(r,x){return r + separator + x});
+    var s = this.inject('',function(r,x){return r + separator + x});
     var i = separator.length;
     return new rb.String(s).range(i,-1);
   } 

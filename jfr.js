@@ -1,5 +1,11 @@
 // file: jfr.js
 
+// global variables
+
+
+$apos = ''      // stores the postmatch from a regex.
+$backtick = ''  // store the prematch from a regex.
+$tilde = null   // return the matchdata object from a regex
 
 function to_a(){
   var a = new rb.Array();
@@ -38,16 +44,6 @@ function rbFixnum(val){
   //fixnum_num
 }
 
-function functionName(object){
-  rawName = object.constructor.toString().slice(9);
-  pos = rawName.indexOf('(',0);
-  return new rb.String(rawName.slice(0, pos));
-}
-
-function rbType(datatype){
-  rtype = {String: 'String', Array: 'Array', Number: 'Fixnum'};
-  return rtype[functionName(datatype).to_s()];  
-}
 
 // Ruby Object methods
 
@@ -136,6 +132,35 @@ rbTime = {
   
 }
 
+// -------------------------
+
+function functionName(object){
+  rawName = object.constructor.toString().slice(9);
+  pos = rawName.indexOf('(',0);
+  return new rb.String(rawName.slice(0, pos));
+}
+
+function rbType(datatype){
+  rtype = {String: 'String', Array: 'Array', Number: 'Fixnum'};
+  return rtype[functionName(datatype).to_s()];  
+}
+
+function Hash(a){
+  return a.inject({},function(r,x){ 
+    return r.merge([x.first(), x.last()]); 
+  });  
+}
+
+function puts(s){console.log(s);}
+function rbEval(){
+  
+}
+
+function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
+
+
+// -------------------------
+
 rb = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime
@@ -153,14 +178,6 @@ rbList.each(function(class_key,v) {
   });
 });
 
-function Hash(a){
-  return a.inject({},function(r,x){ 
-    return r.merge([x.first(), x.last()]); 
-  });  
-}
-
-function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
-function puts(s){console.log(s);}
 
 
 

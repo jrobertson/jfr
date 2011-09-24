@@ -1,6 +1,11 @@
 // file: string.js
 
 
+function string_concat(string){
+  this.string = this.string.concat(string);
+  return this;
+}
+
 function string_scan(rawPattern){
   
   if (functionName(rawPattern).to_s() == 'RegExp') {
@@ -128,6 +133,7 @@ function string_to_s(){return this.string;}
 
 function rbString(s){
   
+  this.concat = string_concat;
   this.downcase = downcase;
   this.get = string_get;
   this.gsub = gsub;
