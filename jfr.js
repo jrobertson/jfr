@@ -164,8 +164,3 @@ function puts(s){console.log(s);}
 
 
 
-a1 = new rb.Array(['a','c','e','g']);
-a2 = new rb.Array(['b','d','f','h']);
-
-r = a1.zip(a2);
-Hash()

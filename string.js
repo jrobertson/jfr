@@ -41,6 +41,7 @@ function gsub(rawPattern, newString) {
 }
 
 function string_length(){return this.string.length;}
+function string_index(pattern){ return this.string.search(pattern); }
 
 function string_match(rawPattern){
 
@@ -129,7 +130,8 @@ function rbString(s){
   
   this.downcase = downcase;
   this.get = string_get;
-  this.gsub = gsub;    
+  this.gsub = gsub;
+  this.index = string_index;
   this.match = string_match;
   this.range = string_range;
   this.range3 = string_range3;
