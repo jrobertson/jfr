@@ -1,5 +1,10 @@
 // file: array.js
 
+function array_concat(obj){ 
+  native_obj = obj.is_a(Array) ? obj.array : obj.string
+  this.array = this.array.concat(native_obj);
+  return this;
+}
 
 function array_delete_at(i){ 
   var r = this.array.splice(i,1)[0];
@@ -226,6 +231,7 @@ function array_zip(a2){
 function rbArray(i, obj){
 
   this.at = array_get;
+  this.concat = array_concat;
   this.delete_at = array_delete_at;
   this.detect = array_detect;
   this.each = array_each;  

@@ -154,7 +154,7 @@ function rbHash(raw_h){
     
     var objType = functionName(raw_h).to_s();
     
-    if (objType == 'Object'){
+    if (objType == 'Object' || objType == 'rbObject'){
 
       for (var x in raw_h){this.hash[x] = raw_h[x];}
       

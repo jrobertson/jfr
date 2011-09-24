@@ -151,6 +151,10 @@ function Hash(a){
   });  
 }
 
+function o(datatype){
+  return new rb[rbType(datatype)](datatype);
+}
+
 function puts(s){console.log(s);}
 function rbEval(){
   
@@ -168,9 +172,10 @@ rb = {  Array: rbArray, String: rbString, Range: rbRange,
 
 // add the object methods into each object
 
-// clone the rb object list and reject Object
+// clone the rb object list and reject Object, and Time
 rbList = new rb.Hash(rb)
 rbList.delete('Object');
+rbList.delete('Time');
 
 rbList.each(function(class_key,v) {
   new rb.Hash(new rb.Object).each(function(method_key, method_val){
@@ -180,4 +185,6 @@ rbList.each(function(class_key,v) {
 
 
 
+//s = new rb.String("a1, a2 = 'funk', 'pu = nk'");
+//r = s.split('=',2)
 

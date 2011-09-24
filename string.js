@@ -1,8 +1,8 @@
 // file: string.js
 
 
-function string_concat(string){
-  this.string = this.string.concat(string);
+function string_concat(obj){
+  this.string = this.string.concat(obj.string);
   return this;
 }
 
@@ -20,7 +20,6 @@ function string_get()  { return this.string; }
 function upcase()   { return this.string.toUpperCase(); }
 function downcase() { return this.string.toLowerCase(); }
 
-function split(pattern){ return this.string.split(pattern);}
 
 function sub(pattern, newString) {
   s = new String(this.string);
@@ -69,6 +68,30 @@ function string_match(rawPattern){
   matchdata.post_match = rbString.range(rawMatch['index'] + 
   stringMatch.length, -1);
   return matchdata;
+}
+
+function string_split(rawPattern, i){
+  
+  var result = rb.Array();
+  
+  if (typeof i == 'undefined') 
+    result = new rb.Array(this.string.split(rawPattern));
+  else {
+    a = new rb.Array(this.string.split(rawPattern));
+    //a2 = a.slice_p(0,i-1).join();
+    a2 = a.slice_p(0,i-1);
+    
+    pattern = rawPattern;
+    
+    if (functionName(rawPattern).to_s() == 'RegExp') {
+      pattern = rawPattern.toString().slice(1, -1);
+    }      
+    
+    result = a2.concat(a.join(pattern));
+
+  }
+  
+  return result;
 }
 
 function string_sprintf(a){
@@ -145,7 +168,7 @@ function rbString(s){
   this.scan = string_scan;
   this.set = string_set;
   this.slice = string_slice;
-  this.split = split;
+  this.split = string_split;
   this.sprintf = string_sprintf;
   this.sub = sub;
   this.sub_p = sub_p;
