@@ -64,10 +64,12 @@ function hash_map(f){
 }
 
 function hash_merge(raw_h){
-  var h = this.clone();
-  for (var x in raw_h){ h.hash[x] = raw_h[x];}
-  h.find_length;
-  return h;
+  
+  h = new rb.Hash(raw_h);
+  var h_copy = this.clone();  
+  for (var x in h.hash){ h_copy.hash[x] = h.hash[x];}
+  puts (h_copy);
+  return h_copy;
 }
 
 function hash_merge_p(raw_h){
@@ -148,8 +150,20 @@ function rbHash(raw_h){
   this.length = 0;
   this.hash = {};
   
-  if (typeof raw_h == 'object') {
-    for (var x in raw_h){this.hash[x] = raw_h[x];}
+  if (typeof raw_h != 'undefined') {
+    
+    var objType = functionName(raw_h).to_s();
+    
+    if (objType == 'Object'){
+
+      for (var x in raw_h){this.hash[x] = raw_h[x];}
+      
+    }
+    else if (objType == 'Array') {
+      
+      eval("this.hash = {" + raw_h[0] + ": '" + raw_h[1] + "'};");
+      
+    }
   }
   
   this.find_length();  

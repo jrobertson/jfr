@@ -69,12 +69,15 @@ function array_join(separator){
 }
 
 function array_map(f){
-  if (typeof f != 'function') return this;
-
-  var a = [];
-  this.each(function(x){a.push(f(x));});
-  this.last_method = 'map';
-  return new rbArray(a);
+  if (typeof f != 'function') {
+    this.last_method = 'map';
+    return this;
+  }  
+  var basic_a = [];
+  this.each(function(x){ basic_a.push(f(x)); });
+  var a = new rb.Array(basic_a);
+  a.last_method = 'map';
+  return a;
 }
 
 function array_max(){ return this.sort().last();}
@@ -203,12 +206,21 @@ function array_set(index, value){
 function array_to_a(){  return this.array;}
 
 function array_with_index(f){
-  var a = [];
-  for (var i = 0; i < this.array.length; i++) {a[i] = f(this.array[i], i);}
-  result = this;
-  if (this.last_method == 'map') result = a;
-  this.last_method = '';
-  return result;
+  
+  var basic_a = [];
+
+  for (var i = 0; i < this.array.length; i++) {
+    basic_a.push(f(this.array[i], i));
+  }
+  var a = new rb.Array(basic_a);
+
+  return a;  
+}
+
+function array_zip(a2){
+  return this.map().with_index(function(x,i){
+    return new rb.Array([x, a2.at(i)]);
+  });
 }
 
 function rbArray(i, obj){
@@ -224,6 +236,7 @@ function rbArray(i, obj){
   this.inject = array_inject;  
   this.join = array_join;
   this.last = array_last;
+  this.last_method = '';
   this.length = array_length;
   this.map = array_map;
   this.max = array_max;
@@ -243,6 +256,7 @@ function rbArray(i, obj){
   this.to_a = array_to_a;  
   this.unshift = array_unshift;
   this.with_index = array_with_index;
+  this.zip = array_zip;
      
   if (typeof i == 'undefined') this.array = new Array;
   else {

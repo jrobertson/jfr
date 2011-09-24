@@ -153,24 +153,19 @@ rbList.each(function(class_key,v) {
   });
 });
 
+function Hash(a){
+  return a.inject({},function(r,x){ 
+    return r.merge([x.first(), x.last()]); 
+  });  
+}
 
 function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 function puts(s){console.log(s);}
 
-//var a = new rb.Array([3,5,7,2,78,1]);
-//var h = new rb.Hash({fun: 'rwe', colour: 'rtf'});
-//h.values_at(['fun', 'colour']);
-//a.detect(function(x){ return x > 5;})
-
-//h.reject(function(k,v){ return v == 'rtf';});
-//h.delete('fun');
-//s = new rb.String("food foraging");
-//s.regex(/forag/);
-//s.scan(/fo/);
 
 
-//a = new rb.Array(['apple','grapes']);
-//var s = new rb.String("where %s  then %s");
-//s.sprintf(a);
+a1 = new rb.Array(['a','c','e','g']);
+a2 = new rb.Array(['b','d','f','h']);
 
-t = rb.Time.now();
+r = a1.zip(a2);
+Hash()
