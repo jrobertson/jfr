@@ -29,9 +29,13 @@ function array_detect(f){
 }
 
 function array_each(f){  
-  this.last_method = '';
+  //this.last_method = '';
   if (typeof f != 'function') return this;
   for (var i = 0; i < this.array.length; i++) {f(this.array[i]);}
+}
+
+function array_empty(){
+  return this.length < 1
 }
 
 function array_first(){return this.array[0];}
@@ -60,6 +64,7 @@ function array_inject(arg, f){
   return result;
 }
 
+function array_inspect(){return this.array;}
 function array_join(separator){
   
   if (typeof separator == 'undefined') {
@@ -75,13 +80,13 @@ function array_join(separator){
 
 function array_map(f){
   if (typeof f != 'function') {
-    this.last_method = 'map';
+    //this.last_method = 'map';
     return this;
   }  
   var basic_a = [];
   this.each(function(x){ basic_a.push(f(x)); });
   var a = new rb.Array(basic_a);
-  a.last_method = 'map';
+  //a.last_method = 'map';
   return a;
 }
 
@@ -234,15 +239,17 @@ function rbArray(i, obj){
   this.concat = array_concat;
   this.delete_at = array_delete_at;
   this.detect = array_detect;
+  this.empty = array_empty;
   this.each = array_each;  
   this.first = array_first;
   this.flatten = array_flatten;
   this.get = array_get;
   this.include = array_include;
   this.inject = array_inject;  
+  this.inspect = array_inspect;
   this.join = array_join;
   this.last = array_last;
-  this.last_method = '';
+  //this.last_method = '';
   this.length = array_length;
   this.map = array_map;
   this.max = array_max;

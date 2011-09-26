@@ -89,8 +89,8 @@ function rbMatchData(a){
 function sec(){ return new Date().getSeconds(); }
 function min(){ return new Date().getMinutes(); }
 function hour(){ return new Date().getHours(); }
-function day(){ return new Date().getDay(); }
-function month(){ return new Date().getMonth(); }
+function day(){ return new Date().getUTCDate(); }
+function month(){ return new Date().getMonth() + 1; }
 
 function now_to_a(){
   return new rb.Array([sec(), min(), hour(), day(), month(), year(), wday()]);
@@ -121,38 +121,55 @@ rbNow = {
 
 function time_now(){
   // the format we want 2011-09-23 16:45:51 +0100
-  /*var a = new rb.Array;
-  a.push(new Date().getFullYear();)*/
-  
-  return rbNow;
+  var raw_a = [year(), month(), day(), hour(), min(), sec()];      
+  return o("%s-%s-%s %s:%s:%s").sprintf(o(raw_a));
 }
 
-rbTime = {
-  now: time_now
-  
+rbTime = {  now: time_now  }
+
+function nil_to_s(){  return o(''); }
+function nil_to_a(){  return o([]); }
+function nil_to_i(){  return o(0); }
+function nil_to_f(){  return o(0.0); }
+
+
+rbNil = { 
+  null: 'null', to_s: nil_to_s, to_a: nil_to_a,
+  to_i: nil_to_s, to_f: nil_to_f
 }
+
 
 // -------------------------
 
 function functionName(object){
-  rawName = object.constructor.toString().slice(9);
-  pos = rawName.indexOf('(',0);
+  var rawName = object.constructor.toString().slice(9);
+  var pos = rawName.indexOf('(',0);
   return new rb.String(rawName.slice(0, pos));
 }
 
 function rbType(datatype){
-  rtype = {String: 'String', Array: 'Array', Number: 'Fixnum'};
+  var rtype = {String: 'String', Array: 'Array', Number: 'Fixnum'};
   return rtype[functionName(datatype).to_s()];  
 }
 
+// equivalent to Hash[]
 function Hash(a){
   return a.inject({},function(r,x){ 
     return r.merge([x.first(), x.last()]); 
   });  
 }
 
+// automatically creates a ruby object from a native object
 function o(datatype){
   return new rb[rbType(datatype)](datatype);
+}
+
+// equivalent to %w
+function pw(raw_o){
+  a = new rb.String(raw_o).split(/\s/).select(function(x){
+    return x.length > 0
+  });
+  return a
 }
 
 function puts(s){console.log(s);}
@@ -167,15 +184,18 @@ function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 
 rb = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
-        Object: rbObject, MatchData: rbMatchData, Time: rbTime
+        Object: rbObject, MatchData: rbMatchData, Time: rbTime,
+        nil: rbNil
      }
 
 // add the object methods into each object
 
 // clone the rb object list and reject Object, and Time
 rbList = new rb.Hash(rb)
-rbList.delete('Object');
-rbList.delete('Time');
+//o(['])
+pw('Object Time nil').each(function(x){ rbList.delete(x);});
+//rbList.delete('Object');
+//rbList.delete('Time');
 
 rbList.each(function(class_key,v) {
   new rb.Hash(new rb.Object).each(function(method_key, method_val){
@@ -188,3 +208,11 @@ rbList.each(function(class_key,v) {
 //s = new rb.String("a1, a2 = 'funk', 'pu = nk'");
 //r = s.split('=',2)
 
+rb.Time.now();
+
+//s4 = o("%s wer %s wer %d");
+//s4.gsub(/%./, 'rock');
+//s4.gsub(/%./, function(x){puts (x)});
+//s4.sub(/%./, 'rock');
+//s4.sub(/%./, function(x){return (x + 'ffff')});
+//s4.gsub(/%./, 'kkk');
