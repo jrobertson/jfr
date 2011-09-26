@@ -131,11 +131,11 @@ function nil_to_s(){  return o(''); }
 function nil_to_a(){  return o([]); }
 function nil_to_i(){  return o(0); }
 function nil_to_f(){  return o(0.0); }
+function nil_inspect(){ return 'nil';}
 
-
-rbNil = { 
-  null: 'null', to_s: nil_to_s, to_a: nil_to_a,
-  to_i: nil_to_s, to_f: nil_to_f
+rbNilClass = { 
+  null: 'nil', to_s: nil_to_s, to_a: nil_to_a,
+  to_i: nil_to_s, to_f: nil_to_f, inspect: nil_inspect
 }
 
 
@@ -185,17 +185,20 @@ function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 rb = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
-        nil: rbNil
+        NilClass: rbNilClass
      }
-
+     
+nil = rb.NilClass
+        //
 // add the object methods into each object
 
 // clone the rb object list and reject Object, and Time
-rbList = new rb.Hash(rb)
+rbList = new rb.Hash(rb);
 //o(['])
-pw('Object Time nil').each(function(x){ rbList.delete(x);});
-//rbList.delete('Object');
-//rbList.delete('Time');
+//pw('Object Time nilClass').each(function(x){ rbList.delete(x);});
+rbList.delete('Object');
+rbList.delete('Time');
+rbList.delete('NilClass');
 
 rbList.each(function(class_key,v) {
   new rb.Hash(new rb.Object).each(function(method_key, method_val){
@@ -210,9 +213,10 @@ rbList.each(function(class_key,v) {
 
 rb.Time.now();
 
-//s4 = o("%s wer %s wer %d");
+s4 = o("%s wer %s wer %d");
 //s4.gsub(/%./, 'rock');
 //s4.gsub(/%./, function(x){puts (x)});
 //s4.sub(/%./, 'rock');
 //s4.sub(/%./, function(x){return (x + 'ffff')});
 //s4.gsub(/%./, 'kkk');
+s4.regex('eee')

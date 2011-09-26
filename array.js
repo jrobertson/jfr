@@ -1,7 +1,7 @@
 // file: array.js
 
 function array_concat(obj){ 
-  native_obj = obj.is_a(Array) ? obj.array : obj.string
+  native_obj = obj.is_a('Array') ? obj.array : obj.string
   this.array = this.array.concat(native_obj);
   return this;
 }
@@ -64,7 +64,7 @@ function array_inject(arg, f){
   return result;
 }
 
-function array_inspect(){return this.array;}
+function array_inspect(){return "[" + this.array.toString() + "]";}
 function array_join(separator){
   
   if (typeof separator == 'undefined') {

@@ -9,15 +9,18 @@ function string_concat(obj){
   this.string = this.string.concat(obj.string);
   return this;
 }
+
 function downcase() { return this.string.toLowerCase(); }
 function string_get()  { return this.string; }
+
 function gsub(rawPattern, newString) {
   
   var s2 = this.clone();
-  while (s2.regex(rawPattern)) {
-    puts ('s2 : ' + s2.to_s());
+  
+  while (s2.regex(rawPattern) != nil) {
     s2.sub_p(rawPattern, newString);
   }
+  
   return s2;
 }
 
@@ -36,22 +39,20 @@ function string_scan(rawPattern){
 }
 
 function string_set(v) { this.string = v; }
-
 function upcase()   { return this.string.toUpperCase(); }
-
-
-
-
 
 function string_match(rawPattern){
 
+  var pattern = rawPattern;
+  
   if (functionName(rawPattern).to_s() == 'RegExp') {
     var pattern = rawPattern.toString().slice(1, -1);
-  }  
-  var regex = new RegExp(pattern);
+  }
   
+  var regex = new RegExp(pattern);  
   var rawMatch = this.string.match(regex);
-  if (!rawMatch) return null;
+
+  if (rawMatch == null) return nil;
   
   var aMatch = new rb.Array(rawMatch);
   var stringMatch = aMatch.shift();
@@ -99,7 +100,7 @@ function string_range3(x1, x2) {
 function string_regex(pattern,index){
   
   var matchdata = this.match(pattern);
-  
+  if (matchdata == nil) return nil
   if (typeof index == 'undefined'){
     return matchdata.to_s();
   }
