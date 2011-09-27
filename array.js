@@ -146,14 +146,14 @@ function array_shift(count){
 function array_slice(x1,x2){
   
   var a = this.array;
-  if (typeof x1 == 'undefined') return null
+  if (typeof x1 == 'undefined') return nil
 
   if (typeof x2 == 'undefined') {
     result = a.slice(x1, x1+1);
   }
   else {
     if (x2 > x1) result = a.slice(x1, x1+x2);
-    else return x2 < 0 ? null : ''
+    else return x2 < 0 ? nil : ''
   }  
 
   return new rb.Array(result);
@@ -161,7 +161,7 @@ function array_slice(x1,x2){
 
 function array_slice_p(x1,x2){
   
-  if (typeof x1 == 'undefined') return null  
+  if (typeof x1 == 'undefined') return nil  
 
   if (typeof x2 == 'undefined') {
     result = this.slice(x1);
@@ -174,7 +174,7 @@ function array_slice_p(x1,x2){
       //result = a.slice(x1, x1+x2);
       this.array.splice(x1, x1+x2);
     }
-    else return x2 < 0 ? null : ''
+    else return x2 < 0 ? nil : ''
   }  
 
   return result;

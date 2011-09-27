@@ -13,17 +13,26 @@ function string_concat(obj){
 function downcase() { return this.string.toLowerCase(); }
 function string_get()  { return this.string; }
 
-function gsub(rawPattern, newString) {
-  
-  var s2 = this.clone();
+function gsub_base(s2, rawPattern, unknown) {
   
   while (s2.regex(rawPattern) != nil) {
-    s2.sub_p(rawPattern, newString);
+    s2.sub_p(rawPattern, unknown);
   }
   
   return s2;
 }
 
+function gsub(rawPattern, newString) {
+  
+  return gsub_base(this.clone(), rawPattern, newString);
+
+}
+
+function gsub_p(rawPattern, newString) {
+  
+  return gsub_base(this, rawPattern, newString);
+
+}
 
 function string_index(pattern){ return this.string.search(pattern); }
 function string_inspect() { return this.string;}
@@ -175,14 +184,14 @@ function string_sprintf(a){
 function string_slice(x1,x2){
 
   var s = this.string;
-  if (typeof x1 == 'undefined') return null
+  if (typeof x1 == 'undefined') return nil
 
   if (typeof x2 == 'undefined') {
     return s.slice(x1, x1+1);
   }
   else {
     if (x2 > x1) return s.slice(x1, x2);
-    else return x2 < 0 ? null : ''
+    else return x2 < 0 ? nil : ''
   }
 }
 
@@ -195,6 +204,7 @@ function rbString(s){
   this.downcase = downcase;
   this.get = string_get;
   this.gsub = gsub;
+  this.gsub_p = gsub_p;
   this.index = string_index;
   this.inspect = string_inspect;
   this.match = string_match;
