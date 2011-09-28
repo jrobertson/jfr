@@ -1,6 +1,13 @@
 // file: array.js
 
-function array_concat(obj){ 
+function array_concat(rawObj){
+  obj = rawObj;
+  if (functionName(obj) == 'Array' || functionName(obj) == 'String') {
+    puts ('dude : ' + functionName(obj));
+    obj = o(rawObj);
+  }
+  puts ('here typeof' + (typeof obj));
+  puts ('here constructor' + (obj.constructor.slice(0,20)));
   native_obj = obj.is_a('Array') ? obj.array : obj.string
   this.array = this.array.concat(native_obj);
   return this;

@@ -39,9 +39,17 @@ function rbEnumerable(raw_object){
   for(x in raw_object) {this.enumerable[x] = raw_object[x]};
 }
 
+function fixnum_chr(code){
+  return String.fromCharCode(this.num);
+}
+
+function fixnum_inspect(){  return this.num; }
+
 function rbFixnum(val){
-  this.num = val;
+  this.chr = fixnum_chr;
+  this.inspect = fixnum_inspect;
   //fixnum_num
+  this.num = val;
 }
 
 
@@ -61,7 +69,7 @@ function object_respond_to(method){
   return this.public_methods().include(method);
 }
 
-function object_class(){ return functionName(this).range(2,-1); }
+function object_class(){ return functionName(this).sub(/^rb/,''); }
 
 function rbObject(){
   this.is_a = object_is_a;
@@ -73,7 +81,12 @@ function rbObject(){
 
 function matchdata_captures(){  return this.rb_array; }
 function matchdata_to_s(){ return this.string; }
-function matchdata_inspect(){ return this.class() + ' ' + this.string;}
+function matchdata_inspect(){ 
+  return this.class() + ' ' + this.string;
+  //#<MatchData "fu" 1:"fu" 2:"u">
+
+  return "#<MatchData >"
+}
 
 function rbMatchData(a){
   this.regexp = null;
@@ -133,10 +146,16 @@ function nil_to_i(){  return o(0); }
 function nil_to_f(){  return o(0.0); }
 function nil_inspect(){ return 'nil';}
 
-rbNilClass = { 
-  null: 'nil', to_s: nil_to_s, to_a: nil_to_a,
-  to_i: nil_to_s, to_f: nil_to_f, inspect: nil_inspect
+function rbNilClass() { 
+  this.null = 'nil';
+  this.to_s = nil_to_s;
+  this.to_a = nil_to_a;
+  this.to_i = nil_to_s;
+  this.to_f = nil_to_f;
+  this.inspect = nil_inspect;
 }
+
+
 
 
 // -------------------------
@@ -182,13 +201,13 @@ function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 
 // -------------------------
 
+
 rb = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
         NilClass: rbNilClass
      }
      
-nil = rb.NilClass
         //
 // add the object methods into each object
 
@@ -198,7 +217,7 @@ rbList = new rb.Hash(rb);
 //pw('Object Time nilClass').each(function(x){ rbList.delete(x);});
 rbList.delete('Object');
 rbList.delete('Time');
-rbList.delete('NilClass');
+//rbList.delete('NilClass');
 
 rbList.each(function(class_key,v) {
   new rb.Hash(new rb.Object).each(function(method_key, method_val){
@@ -206,6 +225,7 @@ rbList.each(function(class_key,v) {
   });
 });
 
+nil = new rbNilClass;
 
 
 //s = new rb.String("a1, a2 = 'funk', 'pu = nk'");

@@ -1,11 +1,16 @@
 // file: string.js
 
 
+function string_chr(){
+  return this.string.charAt(0);
+}
+
 function string_clone(){
   return new rb.String(this.string);  
 }
 
 function string_concat(obj){
+  
   this.string = this.string.concat(obj.string);
   return this;
 }
@@ -38,18 +43,6 @@ function string_index(pattern){ return this.string.search(pattern); }
 function string_inspect() { return this.string;}
 function string_length(){return this.string.length;}
 
-function string_scan(rawPattern){
-  
-  if (functionName(rawPattern).to_s() == 'RegExp') {
-    var pattern = rawPattern.toString().slice(1, -1);
-  }  
-  var regex = new RegExp(pattern, 'g');
-  return new rb.Array(this.string.match(regex));
-}
-
-function string_set(v) { this.string = v; }
-function upcase()   { return this.string.toUpperCase(); }
-
 function string_match(rawPattern){
 
   var pattern = rawPattern;
@@ -68,7 +61,7 @@ function string_match(rawPattern){
   var matchdata = new rb.MatchData(aMatch);
   matchdata.string = stringMatch;
   matchdata.regexp = regex;
-  var rbString = new rb.String(stringMatch);
+  var rbString = new rb.String(this.string);
   
   matchdata.string = rbString;
   matchdata.pre_match = rawMatch['index'] > 0 ? 
@@ -76,6 +69,10 @@ function string_match(rawPattern){
   matchdata.post_match = rbString.range(rawMatch['index'] + 
   stringMatch.length, -1);
   return matchdata;
+}
+
+function string_ord(){
+  return this.string.charCodeAt(0);
 }
 
 function string_prepend(val){
@@ -117,6 +114,16 @@ function string_regex(pattern,index){
     return matchdata.captures().at(index - 1);
   }
 }
+function string_scan(rawPattern){
+  
+  if (functionName(rawPattern).to_s() == 'RegExp') {
+    var pattern = rawPattern.toString().slice(1, -1);
+  }  
+  var regex = new RegExp(pattern, 'g');
+  return new rb.Array(this.string.match(regex));
+}
+
+function string_set(v) { this.string = v; }
 
 function string_split(rawPattern, i){
   
@@ -196,9 +203,11 @@ function string_slice(x1,x2){
 }
 
 function string_to_s(){return this.string;}
+function upcase()   { return this.string.toUpperCase(); }
 
 function rbString(s){
   
+  this.chr = string_chr;
   this.clone = string_clone;
   this.concat = string_concat;
   this.downcase = downcase;
@@ -208,6 +217,7 @@ function rbString(s){
   this.index = string_index;
   this.inspect = string_inspect;
   this.match = string_match;
+  this.ord = string_ord;
   this.prepend = string_prepend;
   this.range = string_range;
   this.range3 = string_range3;
