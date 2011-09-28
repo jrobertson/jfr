@@ -82,10 +82,14 @@ function rbObject(){
 function matchdata_captures(){  return this.rb_array; }
 function matchdata_to_s(){ return this.string; }
 function matchdata_inspect(){ 
-  return this.class() + ' ' + this.string;
+  //return this.class() + ' ' + this.string;
   //#<MatchData "fu" 1:"fu" 2:"u">
+  items = this.captures().map().with_index(function(x,i){
+    return (i+1) + ':' + o(34).chr() + x + o(34).chr()
+  }).join(' ').to_s();
 
-  return "#<MatchData >"
+  return "#<MatchData " + o(34).chr() + this.found_string + o(34).chr()
+    + " "  + items + ">"
 }
 
 function rbMatchData(a){
@@ -94,6 +98,7 @@ function rbMatchData(a){
   this.inspect = matchdata_inspect;
   this.post_match = '';  
   this.pre_match = '';
+  this.found_string = '';
   this.string = '';
   this.to_s = matchdata_to_s;
   this.rb_array = a;  
@@ -233,10 +238,12 @@ nil = new rbNilClass;
 
 rb.Time.now();
 
-s4 = o("%s wer %s wer %d");
+//s4 = o("%s wer %s wer %d");
 //s4.gsub(/%./, 'rock');
 //s4.gsub(/%./, function(x){puts (x)});
 //s4.sub(/%./, 'rock');
 //s4.sub(/%./, function(x){return (x + 'ffff')});
 //s4.gsub(/%./, 'kkk');
-s4.regex('eee')
+//s4.regex('eee')
+s = o('fun yo ')
+s.scan(/(.(.))/)

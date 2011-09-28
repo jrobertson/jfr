@@ -59,7 +59,7 @@ function string_match(rawPattern){
   var aMatch = new rb.Array(rawMatch);
   var stringMatch = aMatch.shift();
   var matchdata = new rb.MatchData(aMatch);
-  matchdata.string = stringMatch;
+  matchdata.found_string = stringMatch;
   matchdata.regexp = regex;
   var rbString = new rb.String(this.string);
   
@@ -114,13 +114,17 @@ function string_regex(pattern,index){
     return matchdata.captures().at(index - 1);
   }
 }
-function string_scan(rawPattern){
-  
-  if (functionName(rawPattern).to_s() == 'RegExp') {
-    var pattern = rawPattern.toString().slice(1, -1);
-  }  
-  var regex = new RegExp(pattern, 'g');
-  return new rb.Array(this.string.match(regex));
+
+function scanx(r, pattrn, s){
+  var m = s.match(pattrn);
+  if (m != nil){
+    r.push((m.captures().length() < 1) ? m.found_string : m.captures().array);
+    scanx(r, pattrn, m.post_match);
+  }
+}
+
+function string_scan(rawPattern){    
+  var r = []; scanx(r, rawPattern, this); return r;
 }
 
 function string_set(v) { this.string = v; }
