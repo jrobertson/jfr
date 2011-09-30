@@ -3,11 +3,21 @@
 // global variables
 
 
-$apos = ''      // stores the postmatch from a regex.
-$backtick = ''  // store the prematch from a regex.
+$apos = ''      // stores the post_match from a regex.
+$backtick = ''  // store the pre_match from a regex.
 $tilde = null   // return the matchdata object from a regex
 
-function to_a(){
+function range_inspect(){
+  return this.x1 + '..' + this.x2;
+}
+
+function step(gap){
+  var a = [];
+  for (var i = this.x1; i <= this.x2; i += gap) {a.push(i);}
+  return o(a);  
+}
+
+function range_to_a(){
   var a = new rb.Array();
   for (var i = this.x1; i <= this.x2; i++) {a.set(i,i);}
   return a;
@@ -17,7 +27,9 @@ function rbRange(x1,x2){
 
   this.x1 = x1;
   this.x2 = x2;
-  this.to_a = to_a;
+  this.inspect = range_inspect;
+  this.step = step;
+  this.to_a = range_to_a;
 
 }
 
@@ -80,7 +92,7 @@ function rbObject(){
 }
 
 function matchdata_captures(){  return this.rb_array; }
-function matchdata_to_s(){ return this.string; }
+function matchdata_to_s(){ return this.found_string; }
 function matchdata_inspect(){ 
   //return this.class() + ' ' + this.string;
   //#<MatchData "fu" 1:"fu" 2:"u">
@@ -160,8 +172,26 @@ function rbNilClass() {
   this.inspect = nil_inspect;
 }
 
+function enumerator_each(f){
+  e = this;
+  e.array.each(function(x){
+    e.each_applicator(e.string, x, f);
+  });
+}
+
+function enumerator_inspect(){    
+  return '#<Enumerator: ' + o(34).chr() + '  ' +  o(34).chr() + ':' + this.desc + '>'
+}
 
 
+function rbEnumerator(s, a, f, desc){
+  this.desc = desc;
+  this.string = s;
+  this.array = a;
+  this.each = enumerator_each;
+  this.each_applicator = f;
+  this.inspect = enumerator_inspect;
+}
 
 // -------------------------
 
@@ -210,7 +240,7 @@ function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 rb = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
-        NilClass: rbNilClass
+        NilClass: rbNilClass, Enumerator: rbEnumerator
      }
      
         //
@@ -218,7 +248,7 @@ rb = {  Array: rbArray, String: rbString, Range: rbRange,
 
 // clone the rb object list and reject Object, and Time
 rbList = new rb.Hash(rb);
-//o(['])
+//o(['])a
 //pw('Object Time nilClass').each(function(x){ rbList.delete(x);});
 rbList.delete('Object');
 rbList.delete('Time');
@@ -247,3 +277,9 @@ rb.Time.now();
 //s4.regex('eee')
 s = o('fun yo ')
 s.scan(/(.(.))/)
+
+s = o("%s dfdg %s rwere %d");
+e = s.gsub(/%./, function(x){ return x.to_s() + 'x1';});
+//e.each(function(x){puts (x);});
+
+range = new rb.Range(0,6);

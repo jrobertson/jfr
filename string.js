@@ -18,13 +18,32 @@ function string_concat(obj){
 function downcase() { return this.string.toLowerCase(); }
 function string_get()  { return this.string; }
 
+function gsub_base_inner(s2, rawPattern, unknown) {
+  return s2.sub_p(rawPattern, unknown);
+}
+
 function gsub_base(s2, rawPattern, unknown) {
   
-  while (s2.regex(rawPattern) != nil) {
-    s2.sub_p(rawPattern, unknown);
+  if (typeof unknown != 'undefined') {
+    /*while (s2.regex(rawPattern) != nil) {
+      gsub_base_inner(s2, rawPattern, unknown);
+    }*/
+    var s = s2.split;
+    s2.scan(rawPattern).each(function(x){
+      gsub_base_inner(s2, x, unknown);
+      
+      puts ('s2 : '  + s2.to_s());
+    });
+    return s2;
+
+  }
+  else {
+    a = s2.scan(rawPattern);
+    var desc = 'gsub(' + rawPattern.toString() + ')';
+    enumerator = new rb.Enumerator(s2, a, gsub_base_inner, desc);
+    return enumerator;
   }
   
-  return s2;
 }
 
 function gsub(rawPattern, newString) {
@@ -68,6 +87,9 @@ function string_match(rawPattern){
     rbString.range(0, rawMatch['index'] - 1) : new rb.String('');
   matchdata.post_match = rbString.range(rawMatch['index'] + 
   stringMatch.length, -1);
+  $apos = matchdata.post_match;
+  $backtick = matchdata.pre_match;
+  $tilde = matchdata;
   return matchdata;
 }
 
@@ -106,12 +128,12 @@ function string_range3(x1, x2) {
 function string_regex(pattern,index){
   
   var matchdata = this.match(pattern);
-  if (matchdata == nil) return nil
+  if (matchdata == nil) return nil;
   if (typeof index == 'undefined'){
-    return matchdata.to_s();
+    return o(matchdata.to_s());
   }
   else {
-    return matchdata.captures().at(index - 1);
+    return o(matchdata.captures().at(index - 1));
   }
 }
 
@@ -123,8 +145,15 @@ function scanx(r, pattrn, s){
   }
 }
 
-function string_scan(rawPattern){    
-  var r = []; scanx(r, rawPattern, this); return r;
+function string_scan(rawPattern, f){    
+  
+  var r = []; 
+  scanx(r, rawPattern, this); 
+  
+  if (f) { o(r).each(f); }
+
+  return o(r);
+
 }
 
 function string_set(v) { this.string = v; }
@@ -154,6 +183,7 @@ function string_split(rawPattern, i){
 }
 
 function sub_replace(s2, rawPattern, unknown){
+  
   var pattern = rawPattern;
 
   if (functionName(rawPattern).to_s() == 'RegExp') {
@@ -163,7 +193,7 @@ function sub_replace(s2, rawPattern, unknown){
   var regex = new RegExp(pattern);
   
   if (functionName(unknown).to_s() == 'Function') {
-    xx = s2.regex(regex).to_s();
+    xx = s2.regex(regex);
     f = unknown;
     newString = f(xx);
   }

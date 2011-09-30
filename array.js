@@ -1,5 +1,7 @@
 // file: array.js
 
+function array_clear(){ this.array = [];}
+
 function array_concat(rawObj){
   obj = rawObj;
   if (functionName(obj) == 'Array' || functionName(obj) == 'String') {
@@ -243,6 +245,7 @@ function array_zip(a2){
 function rbArray(i, obj){
 
   this.at = array_get;
+  this.clear = array_clear;
   this.concat = array_concat;
   this.delete_at = array_delete_at;
   this.detect = array_detect;
