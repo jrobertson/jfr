@@ -38,11 +38,18 @@ function array_detect(f){
 }
 
 function array_each(f){  
-  //this.last_method = '';
+
+  for (var i = 0; i < this.array.length; i++) {
+    f(this.array[i]);
+  }
+  return this.array;
+}
+
+function array_each2(f){  
+  //this.last_method = '';  
   if (typeof f != 'function') return this;
   for (var i = 0; i < this.array.length; i++) {f(this.array[i]);}
 }
-
 function array_empty(){
   return this.length < 1
 }
@@ -73,7 +80,10 @@ function array_inject(arg, f){
   return result;
 }
 
-function array_inspect(){return "[" + this.array.toString() + "]";}
+function array_inspect(){
+  return "[" + this.array.join(', ') + "]";
+}
+
 function array_join(separator){
   
   if (typeof separator == 'undefined') {
@@ -250,7 +260,7 @@ function rbArray(i, obj){
   this.delete_at = array_delete_at;
   this.detect = array_detect;
   this.empty = array_empty;
-  this.each = array_each;  
+  this.custom_each = array_each;  
   this.first = array_first;
   this.flatten = array_flatten;
   this.get = array_get;

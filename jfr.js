@@ -7,49 +7,76 @@ $apos = ''      // stores the post_match from a regex.
 $backtick = ''  // store the pre_match from a regex.
 $tilde = null   // return the matchdata object from a regex
 
+function range_each(f, gap){
+  
+  if (typeof gap == 'undefined') gap = 1;
+
+  var a = [];
+  
+  for (var i = this.x1; i <= this.x2; i = i + gap) {    
+    a.push((typeof f == 'function') ? f(i) : i);
+  }
+  this.array = o(a);
+  return this.array;  
+}
+
+function range_each2(f){
+  
+  if (typeof f == 'function') {
+    
+    for (var i = this.x1; i <= this.x2; i += this.gap) {f(i)}
+  }
+  else {
+     
+    var desc =  ':each';
+    this.array = this.to_a();
+    var enumerator = new rb.Enumerator(this, desc);
+    return enumerator;  
+  }
+}
+
 function range_inspect(){
   return this.x1 + '..' + this.x2;
 }
 
-function step(gap){
+function range_iterator(obj){
   var a = [];
-  for (var i = this.x1; i <= this.x2; i += gap) {a.push(i);}
+  //for (var i = obj.x1; i <= obj.x2; i += obj.gap) {a.push(i);}
+  range_each(function(i){a.push(i);})
   return o(a);  
 }
 
+function step(gap){
+  
+  this.gap = gap;
+  //return range_iterator(this);
+  //0..6:step(2)
+  var desc = this.x1 + '..' + this.x2 + ':step(' + gap + ')';
+  enumerator = new rb.Enumerator(this, desc);
+  return enumerator;  
+}
+
 function range_to_a(){
-  var a = new rb.Array();
-  for (var i = this.x1; i <= this.x2; i++) {a.set(i,i);}
-  return a;
+  this.gap = 1;
+
+  var a = [];
+  //for (var i = obj.x1; i <= obj.x2; i += obj.gap) {a.push(i);}
+  range_each(function(i){a.push(i);});
+  return o(a);  
 }
 
 function rbRange(x1,x2){
 
   this.x1 = x1;
   this.x2 = x2;
+  this.custom_each = range_each;
+  this.gap = 1;
   this.inspect = range_inspect;
   this.step = step;
-  this.to_a = range_to_a;
+  //this.to_a = range_to_a;
 
 }
 
-function enum_each(f){  for(x in this.enumerable) f(x); }
-
-function enum_map(f){
-  if (typeof f != 'function') return this;
-  
-  var a = [];
-  this.each( function(x){ a.push(f(x)); } );
-  this.last_method = 'map';
-  return new rb.Array(a);
-}
-
-function rbEnumerable(raw_object){
-    
-  this.each = enum_each;
-  this.enumerable = {};
-  for(x in raw_object) {this.enumerable[x] = raw_object[x]};
-}
 
 function fixnum_chr(code){
   return String.fromCharCode(this.num);
@@ -73,7 +100,7 @@ function object_is_a(name){
 
 function object_methods(){
   var a = [];
-  for (x in this){a.push(x);}
+  for (x in this){a.push(':' + x);}
   return new rb.Array(a);
 }
 
@@ -173,6 +200,10 @@ function rbNilClass() {
 }
 
 function enumerator_each(f){
+  this.obj['each'](f);
+}
+
+function enumerator_each2(f){
   e = this;
   e.array.each(function(x){
     e.each_applicator(e.string, x, f);
@@ -180,16 +211,18 @@ function enumerator_each(f){
 }
 
 function enumerator_inspect(){    
-  return '#<Enumerator: ' + o(34).chr() + '  ' +  o(34).chr() + ':' + this.desc + '>'
+  //return '#<Enumerator: ' + o(34).chr() + '  ' +  o(34).chr() + ':' + this.desc + '>'
+  return '#<Enumerator: ' + this.desc + '>'
 }
 
-
-function rbEnumerator(s, a, f, desc){
+//jr300911 function rbEnumerator(s, a, f, desc){
+function rbEnumerator(obj, desc){
   this.desc = desc;
-  this.string = s;
-  this.array = a;
+  this.obj = obj;
+  //jr300911 this.string = s;
+  //this.array = a;
   this.each = enumerator_each;
-  this.each_applicator = f;
+  //this.each_applicator = f;
   this.inspect = enumerator_inspect;
 }
 
@@ -255,13 +288,18 @@ rbList.delete('Time');
 //rbList.delete('NilClass');
 
 rbList.each(function(class_key,v) {
-  new rb.Hash(new rb.Object).each(function(method_key, method_val){
+  new rb.Hash(new rb.Object).each_pair(function(method_key, method_val){
     rb[class_key].prototype[method_key] = method_val;
   });
 });
 
 nil = new rbNilClass;
 
+pw('Array Hash Range').each(function(class_name){
+  new rb.Hash(new rb.Enumerable).each_pair(function(method_key, method_val){
+    rb[class_name].prototype[method_key] = method_val;
+  });
+});
 
 //s = new rb.String("a1, a2 = 'funk', 'pu = nk'");
 //r = s.split('=',2)
@@ -283,3 +321,6 @@ e = s.gsub(/%./, function(x){ return x.to_s() + 'x1';});
 //e.each(function(x){puts (x);});
 
 range = new rb.Range(0,6);
+range.each(function(x){ puts (x);s});
+e = range.step(2);
+e.each(function(x){puts (x);});

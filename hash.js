@@ -34,7 +34,18 @@ function hash_values(){
 }
 
 function hash_clone(){ return new rbHash(this.hash);}
-function hash_each(f){  for(key in this.hash) f(key,this.hash[key]); }
+
+function hash_each(f){
+  
+  var a = [];
+  for (key in this.hash) {a.push(f(o([key,this.hash[key]])));}
+  this.array = o(a);
+  return this.array;
+}
+
+function hash_each_pair(f){
+  for(key in this.hash) f(key,this.hash[key]); 
+}
 
 function hash_find_length(){
   var count = 0;
@@ -130,7 +141,8 @@ function rbHash(raw_h){
   this.clear = hash_clear;
   this.clone = hash_clone;
   this.delete = hash_delete;
-  this.each = hash_each;
+  this.custom_each = hash_each;
+  this.each_pair = hash_each_pair;
   this.find_length = hash_find_length;
   this.get = hash_get; 
   this.has_key = hash_has_key;
@@ -152,9 +164,9 @@ function rbHash(raw_h){
   
   if (typeof raw_h != 'undefined') {
     
-    var objType = functionName(raw_h).to_s();
+    var objType = functionName(raw_h);
     
-    if (objType == 'Object' || objType == 'rbObject'){
+    if (objType.to_s() == 'Object' || objType.regex(/^rb[A-Z]\w+/) != nil){
 
       for (var x in raw_h){this.hash[x] = raw_h[x];}
       

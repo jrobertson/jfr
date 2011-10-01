@@ -39,8 +39,10 @@ function gsub_base(s2, rawPattern, unknown) {
   }
   else {
     a = s2.scan(rawPattern);
-    var desc = 'gsub(' + rawPattern.toString() + ')';
-    enumerator = new rb.Enumerator(s2, a, gsub_base_inner, desc);
+    var desc = ' ' + o(34).chr() + '  ' +  o(34).chr() + ':' + 
+      'gsub(' + rawPattern.toString() + ')';
+    //enumerator = new rb.Enumerator(s2, a, gsub_base_inner, desc);
+    enumerator = new rb.Enumerator(this, desc);
     return enumerator;
   }
   
@@ -245,6 +247,7 @@ function rbString(s){
   this.clone = string_clone;
   this.concat = string_concat;
   this.downcase = downcase;
+  this.enum = new rb.Enumerable();
   this.get = string_get;
   this.gsub = gsub;
   this.gsub_p = gsub_p;
