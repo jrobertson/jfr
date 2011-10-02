@@ -43,7 +43,7 @@ function array_each(f){
   for (var i = 0; i < this.array.length; i++) {
     a.push(f(this.array[i]));
   }
-  return o(a);
+  return a;
 }
 
 function array_each2(f){  
@@ -55,7 +55,7 @@ function array_empty(){
   return this.length < 1
 }
 
-function array_first(){return this.array[0];}
+
 function array_flatten(){return 'still to do!';}
 function array_get(index){ return this.array[index]; }
 function array_last(){return this.array[this.array.length - 1];}
@@ -81,8 +81,25 @@ function array_inject(arg, f){
   return result;
 }
 
+function scan_a(raw_a) {
+  var a = [];
+  raw_a.each(function(x){
+    if (typeof x != 'undefined' && functionName(x).to_s() == 'rbArray') {
+      a.push(scan_a(x));
+    }
+    else {
+      a.push((functionName(x).to_s() == 'Number' || 
+        (functionName(x).to_s() == 'String' && x[0] == ':')) ?
+          x : '"' + x + '"');
+    }
+  });
+  return '[' + a.join(', ') + ']';
+}
+
 function array_inspect(){
-  return "[" + this.array.join(', ') + "]";
+    
+  //return "[" + this.array.join(', ') + "]";
+  return scan_a(this);
 }
 
 function array_join(separator){
@@ -110,8 +127,6 @@ function array_map2(f){
   return a;
 }
 
-function array_max(){ return this.sort().last();}
-function array_min(){ return this.sort().first();}
 
 function array_partition(f){
   
@@ -123,13 +138,17 @@ function array_partition(f){
 function array_range(x1,x2){
   
   var a = this.array;
+  var result;
   
   if (x2 != -1) {
-    if (x2 <= -2) x2 ++;
-    return a.slice(x1,x2);
+    x2++;
+    //if (x2 <= -2) x2++;
+    result = a.slice(x1,x2);
   }
   else
-    return a.slice(x1)
+    result = a.slice(x1);
+    
+  return rb.Array.new(result);
 }
 
 function array_reject(f){
@@ -163,9 +182,12 @@ function array_shift(count){
   return result;  
 }
 
+function array_size(){ return this.array.length;}
 function array_slice(x1,x2){
   
   var a = this.array;
+  var result;
+  
   if (typeof x1 == 'undefined') return nil
 
   if (typeof x2 == 'undefined') {
@@ -173,7 +195,7 @@ function array_slice(x1,x2){
   }
   else {
     if (x2 > x1) result = a.slice(x1, x1+x2);
-    else return x2 < 0 ? nil : ''
+    else result = x2 < 0 ? nil : ''
   }  
 
   return rb.Array.new(result);
@@ -200,7 +222,6 @@ function array_slice_p(x1,x2){
   return result;
 }
 
-function array_sort(){  return rb.Array.new(this.array.sort());}
 
 
 function array_pop(count){
@@ -261,8 +282,7 @@ function rbArray(i, obj){
   this.delete_at = array_delete_at;
   this.detect = array_detect;
   this.empty = array_empty;
-  this.custom_each = array_each;  
-  this.first = array_first;
+  this.custom_each = array_each;    
   this.flatten = array_flatten;
   this.get = array_get;
   this.include = array_include;
@@ -270,11 +290,10 @@ function rbArray(i, obj){
   this.inspect = array_inspect;
   this.join = array_join;
   this.last = array_last;
-  //this.last_method = '';
+  this.last_method = '';
   this.length = array_length;
   //this.map = array_map;
-  this.max = array_max;
-  this.min = array_min;
+
   this.partition = array_partition;
   this.pop = array_pop;
   this.push = array_push;  
@@ -284,12 +303,14 @@ function rbArray(i, obj){
   this.select = array_select;
   this.set = array_set;
   this.shift = array_shift;
+  this.size = array_size;
   this.slice = array_slice;
   this.slice_p = array_slice_p;
-  this.sort = array_sort;
+  
+  this.temp_array = nil;
   this.to_a = array_to_a;  
   this.unshift = array_unshift;
-  this.with_index = array_with_index;
+  //this.with_index = array_with_index;
   this.zip = array_zip;
      
   if (typeof i == 'undefined') this.array = new Array;

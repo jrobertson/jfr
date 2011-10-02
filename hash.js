@@ -38,7 +38,11 @@ function hash_clone(){ return o(this.hash);}
 function hash_each(f){
   
   var a = [];
-  for (key in this.hash) {a.push(f(o([key,this.hash[key]])));}  
+  for (key in this.hash) {
+    array = o([key,this.hash[key]]);
+    var r = (f == 'function') ? f(array) : array;
+    a.push(r);
+  }  
   return o(a);
 }
 

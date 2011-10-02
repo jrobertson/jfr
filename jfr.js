@@ -104,7 +104,8 @@ function object_methods(){
   return rb.Array.new(a);
 }
 
-function object_respond_to(method){
+function object_respond_to(raw_method){
+  var method = (raw_method[0] != ':') ? ':' + raw_method : raw_method;
   return this.public_methods().include(method);
 }
 
@@ -219,6 +220,32 @@ function enumerator_inspect(){
   return '#<Enumerator: ' + this.desc + '>'
 }
 
+function enumerator_with_index(f){
+  
+  if (typeof f == 'undefined') {
+    var desc = this.inspect() + ':with_index';
+    //this.temp_array = this.to_a();
+    //this.last_method = 'map';
+    var enumerator = new rbSys.Enumerator(this, desc);
+    return enumerator;    
+  }
+  else {
+    var a = [];
+
+    for (var i = 0; i < this.obj.temp_array.length; i++) {
+      a.push(f(this.obj.temp_array[i], i));
+    }
+
+    this.obj.temp_array = o(a);  
+    
+    var r  = (this.obj.last_method == 'each') ? 
+      this.obj.array : this.obj.temp_array;
+    
+    this.obj.last_method = '';
+    return r;
+  }
+}
+
 //jr300911 function rbEnumerator(s, a, f, desc){
 function rbEnumerator(obj, desc){
   this.desc = desc;
@@ -229,6 +256,9 @@ function rbEnumerator(obj, desc){
   this.custom_each = enumerator_each;
   //this.each_applicator = f;
   this.inspect = enumerator_inspect;
+  this.last_method = '';
+  this.with_index = enumerator_with_index;
+  
 }
 
 // -------------------------
@@ -270,7 +300,7 @@ function rbEval(){
 }
 
 function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
-
+function sortNumber(a,b) {return a - b;}
 
 // -------------------------
 
@@ -308,6 +338,8 @@ pw('Array Hash Range Enumerator').each(function(class_name){
   });
 });
 
+
+
 rbArrayObj = {new: function(x,y){return new rbSys.Array(x,y)}};
 rbStringObj = {new: function(s){return new rbSys.String(s)}};
 rbRangeObj = {new: function(x1,x2){return new rbSys.Range(x1,x2)}};
@@ -321,4 +353,10 @@ rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj,
         NilClass: rbNilClass, Enumerator: rbEnumeratorObj
      }
 
+enumerable_each.hello = '124';
  h = o({fun: '123', apple: 'ttt'});
+ a = pw('1 2 3 4 5');
+ 
+ a.range(0,-2).map().with_index(function(x,i){ return a.range(i,i+1);});
+  a = o([1, 33, 4, 5])
+a.min();
