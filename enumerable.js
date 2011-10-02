@@ -11,19 +11,21 @@ function enumerable_each(f){
   else {
     var desc = this.inspect() + ':each';
     this.array = this.to_a();
-    var enumerator = new rb.Enumerator(this, desc);
+    var enumerator = new rbSys.Enumerator(this, desc);
     return enumerator;      
   }  
 }
 
 function enumerable_map(f){
-  if (typeof f != 'function') return this;
-  
-  var a = [];
-  this.each( function(x){ a.push(f(x)); } );
-  this.last_method = 'map';
-  return new rb.Array(a);
-  return this.custom_each(f);
+  if (typeof f == 'function') {
+    return this.each( function(x){ return f(x); } );
+  }  
+  else {
+    var desc = this.inspect() + ':map';
+    this.array = this.to_a();
+    var enumerator = rb.Enumerator.new(this, desc);
+    return enumerator;      
+  }  
 }
 
 function enumerable_to_a(){  

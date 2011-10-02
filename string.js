@@ -6,7 +6,7 @@ function string_chr(){
 }
 
 function string_clone(){
-  return new rb.String(this.string);  
+  return o(this.string);  
 }
 
 function string_concat(obj){
@@ -42,7 +42,7 @@ function gsub_base(s2, rawPattern, unknown) {
     var desc = ' ' + o(34).chr() + '  ' +  o(34).chr() + ':' + 
       'gsub(' + rawPattern.toString() + ')';
     //enumerator = new rb.Enumerator(s2, a, gsub_base_inner, desc);
-    enumerator = new rb.Enumerator(this, desc);
+    enumerator = rb.Enumerator.new(this, desc);
     return enumerator;
   }
   
@@ -77,16 +77,16 @@ function string_match(rawPattern){
 
   if (rawMatch == null) return nil;
   
-  var aMatch = new rb.Array(rawMatch);
+  var aMatch = o(rawMatch);
   var stringMatch = aMatch.shift();
-  var matchdata = new rb.MatchData(aMatch);
+  var matchdata = new rbSys.MatchData(aMatch);
   matchdata.found_string = stringMatch;
   matchdata.regexp = regex;
-  var rbString = new rb.String(this.string);
+  var rbString = o(this.string);
   
   matchdata.string = rbString;
   matchdata.pre_match = rawMatch['index'] > 0 ? 
-    rbString.range(0, rawMatch['index'] - 1) : new rb.String('');
+    rbString.range(0, rawMatch['index'] - 1) : o('');
   matchdata.post_match = rbString.range(rawMatch['index'] + 
   stringMatch.length, -1);
   $apos = matchdata.post_match;
@@ -113,7 +113,7 @@ function string_range(x1, x2) {
   else
     r = s.slice(x1);
     
-  return new rb.String(r);
+  return o(r);
 }
 
 function string_range3(x1, x2) {
@@ -162,12 +162,12 @@ function string_set(v) { this.string = v; }
 
 function string_split(rawPattern, i){
   
-  var result = rb.Array();
+  var result = new rbSys.Array();
   
   if (typeof i == 'undefined') 
-    result = new rb.Array(this.string.split(rawPattern));
+    result = o(this.string.split(rawPattern));
   else {
-    a = new rb.Array(this.string.split(rawPattern));
+    a = o(this.string.split(rawPattern));
     //a2 = a.slice_p(0,i-1).join();
     a2 = a.slice_p(0,i-1);
     
@@ -247,7 +247,7 @@ function rbString(s){
   this.clone = string_clone;
   this.concat = string_concat;
   this.downcase = downcase;
-  this.enum = new rb.Enumerable();
+  //this.enum = new rb.Enumerable();
   this.get = string_get;
   this.gsub = gsub;
   this.gsub_p = gsub_p;

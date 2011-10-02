@@ -101,7 +101,7 @@ function object_is_a(name){
 function object_methods(){
   var a = [];
   for (x in this){a.push(':' + x);}
-  return new rb.Array(a);
+  return rb.Array.new(a);
 }
 
 function object_respond_to(method){
@@ -150,7 +150,7 @@ function day(){ return new Date().getUTCDate(); }
 function month(){ return new Date().getMonth() + 1; }
 
 function now_to_a(){
-  return new rb.Array([sec(), min(), hour(), day(), month(), year(), wday()]);
+  return rb.Array.new([sec(), min(), hour(), day(), month(), year(), wday()]);
 }
 
 function now_to_s(){
@@ -199,6 +199,10 @@ function rbNilClass() {
   this.inspect = nil_inspect;
 }
 
+function enumerator_count(){
+  return this.obj.array.length;
+}
+
 function enumerator_each(f){
   this.obj['each'](f);
 }
@@ -221,7 +225,8 @@ function rbEnumerator(obj, desc){
   this.obj = obj;
   //jr300911 this.string = s;
   //this.array = a;
-  this.each = enumerator_each;
+  this.count = enumerator_count;
+  this.custom_each = enumerator_each;
   //this.each_applicator = f;
   this.inspect = enumerator_inspect;
 }
@@ -231,11 +236,11 @@ function rbEnumerator(obj, desc){
 function functionName(object){
   var rawName = object.constructor.toString().slice(9);
   var pos = rawName.indexOf('(',0);
-  return new rb.String(rawName.slice(0, pos));
+  return new rbSys.String(rawName.slice(0, pos));
 }
 
 function rbType(datatype){
-  var rtype = {String: 'String', Array: 'Array', Number: 'Fixnum'};
+  var rtype = {String: 'String', Array: 'Array', Number: 'Fixnum', Object: 'Hash'};
   return rtype[functionName(datatype).to_s()];  
 }
 
@@ -248,12 +253,12 @@ function Hash(a){
 
 // automatically creates a ruby object from a native object
 function o(datatype){
-  return new rb[rbType(datatype)](datatype);
+  return new rbSys[rbType(datatype)](datatype);
 }
 
 // equivalent to %w
 function pw(raw_o){
-  a = new rb.String(raw_o).split(/\s/).select(function(x){
+  a = new rbSys.String(raw_o).split(/\s/).select(function(x){
     return x.length > 0
   });
   return a
@@ -270,57 +275,50 @@ function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 // -------------------------
 
 
-rb = {  Array: rbArray, String: rbString, Range: rbRange, 
+rbSys = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
         NilClass: rbNilClass, Enumerator: rbEnumerator
      }
-     
+
         //
 // add the object methods into each object
 
 // clone the rb object list and reject Object, and Time
-rbList = new rb.Hash(rb);
+rbList = new rbSys.Hash(rbSys);
 //o(['])a
 //pw('Object Time nilClass').each(function(x){ rbList.delete(x);});
 rbList.delete('Object');
 rbList.delete('Time');
 //rbList.delete('NilClass');
 
-rbList.each(function(class_key,v) {
-  new rb.Hash(new rb.Object).each_pair(function(method_key, method_val){
-    rb[class_key].prototype[method_key] = method_val;
-  });
-});
+rbSys.Array.prototype.each = enumerable_each;
 
 nil = new rbNilClass;
 
-pw('Array Hash Range').each(function(class_name){
-  new rb.Hash(new rb.Enumerable).each_pair(function(method_key, method_val){
-    rb[class_name].prototype[method_key] = method_val;
+rbList.keys().each(function(class_key) {
+  new rbSys.Hash(new rbSys.Object).each_pair(function(method_key, method_val){
+    rbSys[class_key].prototype[method_key] = method_val;
   });
 });
 
-//s = new rb.String("a1, a2 = 'funk', 'pu = nk'");
-//r = s.split('=',2)
+pw('Array Hash Range Enumerator').each(function(class_name){
+  new rbSys.Hash(new rbSys.Enumerable).each_pair(function(method_key, method_val){
+    rbSys[class_name].prototype[method_key] = method_val;
+  });
+});
 
-rb.Time.now();
+rbArrayObj = {new: function(x,y){return new rbSys.Array(x,y)}};
+rbStringObj = {new: function(s){return new rbSys.String(s)}};
+rbRangeObj = {new: function(x1,x2){return new rbSys.Range(x1,x2)}};
+rbHashObj = {new: function(hparam){return new rbSys.Hash(hparam)}};
+rbObjectObj = {new: function(){return new rbSys.Object()}};
+rbEnumeratorObj = {new: function(x){return new rbSys.Enumerator()}};
 
-//s4 = o("%s wer %s wer %d");
-//s4.gsub(/%./, 'rock');
-//s4.gsub(/%./, function(x){puts (x)});
-//s4.sub(/%./, 'rock');
-//s4.sub(/%./, function(x){return (x + 'ffff')});
-//s4.gsub(/%./, 'kkk');
-//s4.regex('eee')
-s = o('fun yo ')
-s.scan(/(.(.))/)
+rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj, 
+        Hash: rbHashObj, Enumerable: rbEnumerable, Fixnum: rbFixnum,
+        Object: rbObjectObj, MatchData: rbMatchData, Time: rbTime,
+        NilClass: rbNilClass, Enumerator: rbEnumeratorObj
+     }
 
-s = o("%s dfdg %s rwere %d");
-e = s.gsub(/%./, function(x){ return x.to_s() + 'x1';});
-//e.each(function(x){puts (x);});
-
-range = new rb.Range(0,6);
-range.each(function(x){ puts (x);s});
-e = range.step(2);
-e.each(function(x){puts (x);});
+ h = o({fun: '123', apple: 'ttt'});
