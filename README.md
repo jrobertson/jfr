@@ -3,12 +3,12 @@ There are numerous JavaScript libraries including Coffescript which provide Ruby
 To get you in the mindset here's some examples:
 
     // displaying items in an array 
-    new rb.Array( ['red', 'green', 'orange'] ).each(function(x){  puts (x) });
+    rb.Array.new( ['red', 'green', 'orange'] ).each(function(x){  puts (x) });
 
     // making a string lower case
-    new rb.String('THIS is FRIDAY.').downcase(); //=> this is friday.
+    rb.String.new('THIS is FRIDAY.').downcase(); //=> this is friday.
 
     // summing numbers in an array
-    new rb.Array([1,2,3,4]).inject(0,function(r,x){ return r + x; }) //=> 10
+    rb.Array.new([1,2,3,4]).inject(0,function(r,x){ return r + x; }) //=> 10
 
 To try out the code I recommend copying and pasting the code into NodeJS. Copy the jfr.js code last into the console as this contains the rb object which calls the other Ruby custom objects. 
