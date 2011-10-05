@@ -1,6 +1,12 @@
 // file: array.js
 
+function array_at(index){ 
+  var r = this.array[index]; 
+  return r != null ? r : nil
+}
 function array_clear(){ this.array = [];}
+function array_compact(){ return this.reject(function(x){return x == nil;});}
+function array_compact_p(){ this.array = this.compact().array; return this;}
 
 function array_concat(rawObj){
   obj = rawObj;
@@ -57,7 +63,6 @@ function array_empty(){
 
 
 function array_flatten(){return 'still to do!';}
-function array_get(index){ return this.array[index]; }
 function array_last(){return this.array[this.array.length - 1];}
 function array_length(){return this.array.length;}
 
@@ -151,20 +156,8 @@ function array_range(x1,x2){
   return rb.Array.new(result);
 }
 
-function array_reject(f){
-  
-  var r = o(this.array);
-  this.each().with_index(function(x, i){ if (f(x) == true) r.delete_at(i); });
-  return r;
-}
-
-// a.select(function(x){ return (x < 6)}) 
-function array_select(f){
-  
-  var r = [];
-  this.each(function(x){ if (f(x) == true) r.push(x); })
-  return o(r);
-}
+function array_reject_p(f){ this.array = this.reject(f).array; return this;}
+function array_select_p(f){ this.array = this.select(f).array; return this;}
 
 function array_shift(count){
   var result;
@@ -276,15 +269,16 @@ function array_zip(a2){
 
 function rbArray(i, obj){
 
-  this.at = array_get;
+  this.at = array_at;
   this.clear = array_clear;
+  this.compact = array_compact;
+  this.compact_p = array_compact_p;
   this.concat = array_concat;
   this.delete_at = array_delete_at;
   this.detect = array_detect;
   this.empty = array_empty;
   this.custom_each = array_each;    
   this.flatten = array_flatten;
-  this.get = array_get;
   this.include = array_include;
   this.inject = array_inject;  
   this.inspect = array_inspect;
@@ -298,9 +292,9 @@ function rbArray(i, obj){
   this.pop = array_pop;
   this.push = array_push;  
   this.range = array_range;
-  this.reject = array_reject;
+  this.reject_p = array_reject_p;
   this.reverse = reverse;
-  this.select = array_select;
+  this.select_p = array_select_p;
   this.set = array_set;
   this.shift = array_shift;
   this.size = array_size;

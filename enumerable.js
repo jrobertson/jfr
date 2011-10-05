@@ -70,6 +70,19 @@ function enumerable_minmax(){
   return o([o(a).first(), o(a).last()]);
 }
 
+function enumerable_reject(f){
+  return this.select(function(x){
+    return !f(x);
+  });
+}
+
+function enumerable_select(f){
+  
+  var r = [];
+  this.each(function(x){ if (f(x) == true) r.push(x); })
+  return o(r);
+}
+
 function enumerable_sort(){ 
   this.each();
   return this.temp_array.sort(sortNumber);
@@ -88,6 +101,8 @@ function rbEnumerable(s){
   this.max = enumerable_max;
   this.min = enumerable_min;  
   this.minmax = enumerable_minmax;
+  this.reject = enumerable_reject;
+  this.select = enumerable_select;
   this.sort = enumerable_sort;
   this.to_a = enumerable_to_a;
 
