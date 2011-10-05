@@ -7,74 +7,29 @@ $apos = ''      // stores the post_match from a regex.
 $backtick = ''  // store the pre_match from a regex.
 $tilde = null   // return the matchdata object from a regex
 
-function range_each(f, gap){
-  
-  if (typeof gap == 'undefined') gap = 1;
+function range_each(f){ return o(this.array).each(f); }
 
+function step(gap, f){
+  
   var a = [];
+  for (var i = 0; i < this.array.length; i = i + gap) a.push(this.array[i]);
   
-  for (var i = this.x1; i <= this.x2; i = i + gap) {    
-    a.push((typeof f == 'function') ? f(i) : i);
+  if (typeof f == 'undefined') {
+    return rb.Enumerator.new(o(a), this.inspect() + ':step(' + gap + ')');
   }
-  this.array = o(a);
-  return this.array;  
+  else  o(a).each(f);
 }
 
-function range_each2(f){
-  
-  if (typeof f == 'function') {
-    
-    for (var i = this.x1; i <= this.x2; i += this.gap) {f(i)}
-  }
-  else {
-     
-    var desc =  ':each';
-    this.array = this.to_a();
-    var enumerator = new rb.Enumerator(this, desc);
-    return enumerator;  
-  }
-}
-
-function range_inspect(){
-  return this.x1 + '..' + this.x2;
-}
-
-function range_iterator(obj){
-  var a = [];
-  //for (var i = obj.x1; i <= obj.x2; i += obj.gap) {a.push(i);}
-  range_each(function(i){a.push(i);})
-  return o(a);  
-}
-
-function step(gap){
-  
-  this.gap = gap;
-  //return range_iterator(this);
-  //0..6:step(2)
-  var desc = this.x1 + '..' + this.x2 + ':step(' + gap + ')';
-  enumerator = new rb.Enumerator(this, desc);
-  return enumerator;  
-}
-
-function range_to_a(){
-  this.gap = 1;
-
-  var a = [];
-  //for (var i = obj.x1; i <= obj.x2; i += obj.gap) {a.push(i);}
-  range_each(function(i){a.push(i);});
-  return o(a);  
-}
+function range_to_a(){  return o(this.array);}
 
 function rbRange(x1,x2){
-
-  this.x1 = x1;
-  this.x2 = x2;
+  
   this.custom_each = range_each;
-  this.gap = 1;
-  this.inspect = range_inspect;
+  this.inspect = function(){ return x1 + '..' + x2;};
   this.step = step;
-  //this.to_a = range_to_a;
-
+  
+  this.array = [];
+  for (var i = x1; i < x2; i++) this.array.push(i);
 }
 
 
@@ -125,11 +80,11 @@ function matchdata_inspect(){
   //return this.class() + ' ' + this.string;
   //#<MatchData "fu" 1:"fu" 2:"u">
   items = this.captures().map().with_index(function(x,i){
-    return (i+1) + ':' + o(34).chr() + x + o(34).chr()
+    return (i+1) + ':' + o(34).chr() + x + o(34).chr();
   }).join(' ').to_s();
 
   return "#<MatchData " + o(34).chr() + this.found_string + o(34).chr()
-    + " "  + items + ">"
+    + " "  + items + ">";
 }
 
 function rbMatchData(a){
@@ -205,19 +160,14 @@ function enumerator_count(){
 }
 
 function enumerator_each(f){
-  this.obj['each'](f);
+  puts ('enumerator each');
+  return this.obj.custom_each(f);
 }
 
-function enumerator_each2(f){
-  e = this;
-  e.array.each(function(x){
-    e.each_applicator(e.string, x, f);
-  });
-}
 
 function enumerator_inspect(){    
   //return '#<Enumerator: ' + o(34).chr() + '  ' +  o(34).chr() + ':' + this.desc + '>'
-  return '#<Enumerator: ' + this.desc + '>'
+  return '#<Enumerator: ' + this.desc + '>';
 }
 
 function enumerator_with_index(f){
@@ -323,6 +273,7 @@ rbList.delete('Time');
 //rbList.delete('NilClass');
 
 rbSys.Array.prototype.each = enumerable_each;
+rbSys.Array.prototype.select = enumerable_select;
 
 nil = new rbNilClass;
 
@@ -345,7 +296,7 @@ rbStringObj = {new: function(s){return new rbSys.String(s)}};
 rbRangeObj = {new: function(x1,x2){return new rbSys.Range(x1,x2)}};
 rbHashObj = {new: function(hparam){return new rbSys.Hash(hparam)}};
 rbObjectObj = {new: function(){return new rbSys.Object()}};
-rbEnumeratorObj = {new: function(x){return new rbSys.Enumerator()}};
+rbEnumeratorObj = {new: function(x, desc){return new rbSys.Enumerator(x, desc)}};
 
 rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj, 
         Hash: rbHashObj, Enumerable: rbEnumerable, Fixnum: rbFixnum,
@@ -353,10 +304,6 @@ rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj,
         NilClass: rbNilClass, Enumerator: rbEnumeratorObj
      }
 
-enumerable_each.hello = '124';
- h = o({fun: '123', apple: 'ttt'});
- a = pw('1 2 3 4 5');
- 
- a.range(0,-2).map().with_index(function(x,i){ return a.range(i,i+1);});
-  a = o([1, 33, 4, 5])
-a.min();
+r = rb.Range.new(0,5).step(2)
+a = o([1,2,3,0,0,4,5,0,6])
+a.reject(function(x){ return x == 0})
