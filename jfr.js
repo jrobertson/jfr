@@ -306,4 +306,5 @@ rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj,
 
 r = rb.Range.new(0,5).step(2)
 a = o([1,2,3,0,0,4,5,0,6])
-a.reject(function(x){ return x == 0})
+//a.reject(function(x){ return x == 0})
+a.each_slice(2);

@@ -14,16 +14,36 @@ function enumerable_each(f){
 
     var desc = this.inspect() + ':each';
     this.temp_array = this.to_a();
-    this.last_method = 'each';
-    var enumerator = new rbSys.Enumerator(this, desc);
+    return new rbSys.Enumerator(this, desc);
 
-    return enumerator;      
   }  
   else {
     this.temp_array = this.custom_each(f); 
     return this;
   }
   
+}
+
+function enumerable_each_slice(gap,f){
+
+  var a = this;
+  
+  if (typeof f == 'undefined') {
+    
+    var a2 = rb.Range.new(0, a.length()).step(gap).map(function(i){ 
+      return o((i + 1 < a.length()) ? 
+        [a.at(i), a.at(i+1)] : [a.at(i)]);
+    });
+    var desc = this.inspect() + ':each_slice(' + gap + ')';
+
+    return new rbSys.Enumerator(a2, desc);    
+  }
+  else {
+    this.temp_array = rb.Range.new(0, a.length()).step(gap).map(function(i){ 
+      return f((i + 1 < a.length()) ? 
+        [a.at(i), a.at(i+1)] : [a.at(i)]);
+    });    
+  }
 }
 
 function each_cons(increment, f){
@@ -51,7 +71,7 @@ function enumerable_first(){
 function enumerable_map(f){
   if (typeof f == 'function') {
     this.each( function(x){ return f(x); } );
-    return this.temp_array;
+    return o(this.temp_array);
   }  
   else {
     var desc = this.inspect() + ':map';
@@ -96,6 +116,7 @@ function rbEnumerable(s){
  
   this.count = enumerable_count;
   this.each = enumerable_each;
+  this.each_slice = enumerable_each_slice;
   this.first = enumerable_first;
   this.map = enumerable_map;
   this.max = enumerable_max;
