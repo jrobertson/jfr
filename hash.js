@@ -89,10 +89,10 @@ function hash_map2(f){
 
 function hash_merge(raw_h){
   
-  h = rb.Hash.new(raw_h);
+  var h = rb.Hash.new(raw_h);
   var h_copy = this.clone();  
   for (var x in h.hash){ h_copy.hash[x] = h.hash[x];}
-  puts (h_copy);
+
   return h_copy;
 }
 

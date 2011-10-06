@@ -34,9 +34,8 @@ function enumerable_each_slice(gap,f){
       return o((i + 1 < a.length()) ? 
         [a.at(i), a.at(i+1)] : [a.at(i)]);
     });
-    var desc = this.inspect() + ':each_slice(' + gap + ')';
 
-    return new rbSys.Enumerator(a2, desc);    
+    return rb.Enumerator.new(a2, this.inspect() + ':each_slice(' + gap + ')');
   }
   else {
     this.temp_array = rb.Range.new(0, a.length()).step(gap).map(function(i){ 

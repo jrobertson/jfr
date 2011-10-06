@@ -267,6 +267,15 @@ function array_zip(a2){
   });
 }
 
+function scan_a2(a){
+  var a3 = [];
+  for (var i = 0; i < a.length; i++) {
+    x = a[i];
+    a3.push( (functionName(x).regex(/Array/) != nil) ? scan_a(x) : o(x) );
+  }
+  return o(a3);
+}
+
 function rbArray(i, obj){
 
   this.at = array_at;
@@ -317,6 +326,7 @@ function rbArray(i, obj){
       else {
         this.array = new Array;
         for (var j = 0; j < i.length; j++) { this.array[j] = i[j];}
+        //this.array = scan_a2(i);
       }
     }
     else this.array = new Array(i);

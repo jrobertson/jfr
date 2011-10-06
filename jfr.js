@@ -160,7 +160,6 @@ function enumerator_count(){
 }
 
 function enumerator_each(f){
-  puts ('enumerator each');
   return this.obj.custom_each(f);
 }
 
@@ -211,6 +210,13 @@ function rbEnumerator(obj, desc){
   
 }
 
+function random_rand(upper){
+  return Math.floor(Math.random()*upper);
+}
+
+function rbRandom(seed){
+  this.rand = random_rand;
+}
 // -------------------------
 
 function functionName(object){
@@ -225,15 +231,32 @@ function rbType(datatype){
 }
 
 // equivalent to Hash[]
-function Hash(a){
-  return a.inject({},function(r,x){ 
-    return r.merge([x.first(), x.last()]); 
-  });  
+
+function array_to_hash(a){
+  var h = {};
+  a.each(function(x){ h[x.first()] = x.last(); });
+  return o(h);
 }
+
+function Hash(obj){
+
+  var h = {};
+  
+  if (typeof obj == 'undefined') return o({});
+  else {
+    if (functionName(obj).to_s() != 'rbArray')
+      a = o(o(arguments).values().each_slice(2).to_a());
+    else a = obj;
+
+    return array_to_hash(a);
+  }
+}
+
 
 // automatically creates a ruby object from a native object
 function o(datatype){
-  return new rbSys[rbType(datatype)](datatype);
+  //puts ('datatype : ' + datatype);
+  return (typeof datatype != 'undefined') ? new rbSys[rbType(datatype)](datatype) : datatype;
 }
 
 // equivalent to %w
@@ -245,6 +268,8 @@ function pw(raw_o){
 }
 
 function puts(s){console.log(s);}
+
+function rand(upper){ return rb.Random.new().rand(upper); }
 function rbEval(){
   
 }
@@ -258,7 +283,7 @@ function sortNumber(a,b) {return a - b;}
 rbSys = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
-        NilClass: rbNilClass, Enumerator: rbEnumerator
+        NilClass: rbNilClass, Enumerator: rbEnumerator, Random: rbRandom
      }
 
         //
@@ -297,14 +322,11 @@ rbRangeObj = {new: function(x1,x2){return new rbSys.Range(x1,x2)}};
 rbHashObj = {new: function(hparam){return new rbSys.Hash(hparam)}};
 rbObjectObj = {new: function(){return new rbSys.Object()}};
 rbEnumeratorObj = {new: function(x, desc){return new rbSys.Enumerator(x, desc)}};
+rbRandomObj = {new: function(seed){return new rbSys.Random(seed)}};
 
 rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj, 
         Hash: rbHashObj, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObjectObj, MatchData: rbMatchData, Time: rbTime,
-        NilClass: rbNilClass, Enumerator: rbEnumeratorObj
+        NilClass: rbNilClass, Enumerator: rbEnumeratorObj, Random: rbRandomObj
      }
 
-r = rb.Range.new(0,5).step(2)
-a = o([1,2,3,0,0,4,5,0,6])
-//a.reject(function(x){ return x == 0})
-a.each_slice(2);
