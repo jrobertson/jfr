@@ -3,15 +3,13 @@
 function hash_clear(){ this.hash = {}; this.length = 0;}  
 
 function hash_delete(key){
-
   var value = this.hash[key];
   delete this.hash[key];
   this.find_length();
-  return new rbSys.String(value);
+  return new rbString(value);
 }
 
-function hash_key(value){
-  
+function hash_key(value){  
   for (keyName in this.hash) {
     if (this.hash[keyName] == value) return o(keyName);
   }
@@ -24,7 +22,8 @@ function hash_keys(){
 }
 
 function hash_get(key){
-  return this.hash[key];
+  var r = this.hash[key];
+  return (typeof r != 'undefined') ? r : nil;
 }
 
 function hash_values(){
@@ -35,15 +34,15 @@ function hash_values(){
 
 function hash_clone(){ return o(this.hash);}
 
-function hash_each(f){
-  
+function hash_each(f){  
   var a = [];
   for (key in this.hash) {
     array = o([key,this.hash[key]]);
-    var r = (f == 'function') ? f(array) : array;
+    var r = (typeof f == 'function') ? f(array) : array;
     a.push(r);
-  }  
-  return o(a);
+  }
+  this.temp_array = a;
+  return a;
 }
 
 function hash_each_pair(f){
@@ -55,25 +54,19 @@ function hash_find_length(){
   for (var x in this.hash){ count++;}
   this.length = count;
 }
-function hash_inspect(){
 
-  var a = [];
-  
+function hash_inspect(){
+  var a = [];  
   this.each_pair(function(k,v){
     a.push(':' + k + '=>"' + v + '"');
   });
-
   return "{" + a.join(', ') + "}";  
 }
 
-function hash_inject(arg, f){
-
-  // the arg is the datatype    
-  rtype = {String: arg, Object: rb.Hash.new(), Array: '', Number: arg};
-  result = rtype[functionName(arg).to_s()];
-  this.each(function(k,v){
-    result = f(result, k,v);
-  });
+function hash_inject(arg, f){ 
+  var rtype = {String: arg, Object: new rbHash(), Array: '', Number: arg};
+  var result = rtype[functionName(arg).to_s()];
+  this.each(function(k,v){  result = f(result, k,v); });
   return result;
 }
 
@@ -87,12 +80,10 @@ function hash_map2(f){
   return o(a);
 }
 
-function hash_merge(raw_h){
-  
-  var h = rb.Hash.new(raw_h);
+function hash_merge(raw_h){  
+  var h = (functionName(raw_h).to_s() == 'rbHash') ? raw_h : new rbHash(raw_h);
   var h_copy = this.clone();  
   for (var x in h.hash){ h_copy.hash[x] = h.hash[x];}
-
   return h_copy;
 }
 

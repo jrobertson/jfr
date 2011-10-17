@@ -1,13 +1,8 @@
 // file: string.js
 
 
-function string_chr(){
-  return this.string.charAt(0);
-}
-
-function string_clone(){
-  return o(this.string);  
-}
+function string_chr(){  return this.string.charAt(0); }
+function string_clone(){  return o(this.string); }
 
 function string_concat(obj){
   
@@ -42,7 +37,7 @@ function gsub_base(s2, rawPattern, unknown) {
     var desc = ' ' + o(34).chr() + '  ' +  o(34).chr() + ':' + 
       'gsub(' + rawPattern.toString() + ')';
     //enumerator = new rb.Enumerator(s2, a, gsub_base_inner, desc);
-    enumerator = rb.Enumerator.new(this, desc);
+    enumerator = new rbEnumerator(this, desc);
     return enumerator;
   }
   

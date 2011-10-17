@@ -2,7 +2,6 @@
 
 // global variables
 
-
 $apos = ''      // stores the post_match from a regex.
 $backtick = ''  // store the pre_match from a regex.
 $tilde = null   // return the matchdata object from a regex
@@ -155,60 +154,6 @@ function rbNilClass() {
   this.inspect = nil_inspect;
 }
 
-function enumerator_count(){
-  return this.obj.array.length;
-}
-
-function enumerator_each(f){
-  return this.obj.custom_each(f);
-}
-
-
-function enumerator_inspect(){    
-  //return '#<Enumerator: ' + o(34).chr() + '  ' +  o(34).chr() + ':' + this.desc + '>'
-  return '#<Enumerator: ' + this.desc + '>';
-}
-
-function enumerator_with_index(f){
-  
-  if (typeof f == 'undefined') {
-    var desc = this.inspect() + ':with_index';
-    //this.temp_array = this.to_a();
-    //this.last_method = 'map';
-    var enumerator = new rbSys.Enumerator(this, desc);
-    return enumerator;    
-  }
-  else {
-    var a = [];
-
-    for (var i = 0; i < this.obj.temp_array.length; i++) {
-      a.push(f(this.obj.temp_array[i], i));
-    }
-
-    this.obj.temp_array = o(a);  
-    
-    var r  = (this.obj.last_method == 'each') ? 
-      this.obj.array : this.obj.temp_array;
-    
-    this.obj.last_method = '';
-    return r;
-  }
-}
-
-//jr300911 function rbEnumerator(s, a, f, desc){
-function rbEnumerator(obj, desc){
-  this.desc = desc;
-  this.obj = obj;
-  //jr300911 this.string = s;
-  //this.array = a;
-  this.count = enumerator_count;
-  this.custom_each = enumerator_each;
-  //this.each_applicator = f;
-  this.inspect = enumerator_inspect;
-  this.last_method = '';
-  this.with_index = enumerator_with_index;
-  
-}
 
 function random_rand(upper){
   return Math.floor(Math.random()*upper);
@@ -218,6 +163,7 @@ function rbRandom(seed){
   this.rand = random_rand;
 }
 // -------------------------
+
 
 function functionName(object){
   var rawName = object.constructor.toString().slice(9);
@@ -308,12 +254,19 @@ rbList.keys().each(function(class_key) {
   });
 });
 
-pw('Array Hash Range Enumerator').each(function(class_name){
+new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class_name){
   new rbSys.Hash(new rbSys.Enumerable).each_pair(function(method_key, method_val){
     rbSys[class_name].prototype[method_key] = method_val;
   });
 });
 
+// equivalent to %w
+function pw(raw_o){
+  a = new rbSys.String(raw_o).split(/\s/).select(function(x){
+    return x.length > 0
+  });
+  return a
+}
 
 
 rbArrayObj = {new: function(x,y){return new rbSys.Array(x,y)}};
@@ -330,3 +283,6 @@ rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj,
         NilClass: rbNilClass, Enumerator: rbEnumeratorObj, Random: rbRandomObj
      }
 
+
+a = [['dff','rewer'],'werrt'];
+o(a);

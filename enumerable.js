@@ -3,38 +3,30 @@
 function enumerable_count(){  
   if (this.respond_to('size')) return this.size();
   else {
-    this.each()
+    this.each();
     return this.temp_array.length;
   }
 }
 
-function enumerable_each(f){
-  
+function enumerable_each(f){  
   if (typeof f == 'undefined') {  
-
     var desc = this.inspect() + ':each';
     this.temp_array = this.to_a();
     return new rbSys.Enumerator(this, desc);
-
   }  
   else {
-    this.temp_array = this.custom_each(f); 
+    this.temp_array = o(this.custom_each(f)); 
     return this;
-  }
-  
+  }  
 }
 
 function enumerable_each_slice(gap,f){
-
-  var a = this;
-  
-  if (typeof f == 'undefined') {
-    
+  var a = this;  
+  if (typeof f == 'undefined') {    
     var a2 = rb.Range.new(0, a.length()).step(gap).map(function(i){ 
       return o((i + 1 < a.length()) ? 
         [a.at(i), a.at(i+1)] : [a.at(i)]);
     });
-
     return rb.Enumerator.new(a2, this.inspect() + ':each_slice(' + gap + ')');
   }
   else {
@@ -67,16 +59,24 @@ function enumerable_first(){
   return this.temp_array[0];
 }
 
+// e.g. a2.inject({},function(r,x){ return r.merge(Hash(x.first(),x.last())); });
+function enumerable_inject(arg, f){
+  var rtype = {String: arg, Object: new rbHash(), Array: '', Number: arg};
+  var result = rtype[functionName(arg).to_s()];
+  this.each(function(x){ result = f(result, x);  });
+  return result;
+}
+
 function enumerable_map(f){
   if (typeof f == 'function') {
     this.each( function(x){ return f(x); } );
-    return o(this.temp_array);
+    return this.temp_array;
   }  
   else {
     var desc = this.inspect() + ':map';
     this.temp_array = this.to_a();
     this.last_method = 'map';
-    var enumerator = new rbSys.Enumerator(this, desc);
+    var enumerator = new rbEnumerator(this, desc);
     return enumerator;      
   }  
 }
@@ -85,7 +85,7 @@ function enumerable_max(){ return o(this.sort()).last();}
 function enumerable_min(){ return o(this.sort()).first();}
 
 function enumerable_minmax(){
-  var a = this.sort()
+  var a = this.sort();
   return o([o(a).first(), o(a).last()]);
 }
 
@@ -95,16 +95,25 @@ function enumerable_reject(f){
   });
 }
 
-function enumerable_select(f){
-  
+function enumerable_select(f){  
   var r = [];
-  this.each(function(x){ if (f(x) == true) r.push(x); })
+  this.each(function(x){ if (f(x) == true) r.push(x); });
   return o(r);
 }
 
 function enumerable_sort(){ 
   this.each();
-  return this.temp_array.sort(sortNumber);
+  a = this.temp_array;
+  var a2 = [];
+  for (var i = 0; i < a.length; i++){ a2.push(a[i].array); }  
+
+  if (functionName(a2[0]).to_s() == 'Array') {
+    var sorted = (functionName(a2[0][0]).to_s() == 'String') ? a2.sort() 
+      : a2.sort(sortNumber);
+    //return o(sorted).map(function(x){ o(x); });
+    return sorted;
+  }
+  return a.sort();
 }
 
 function enumerable_to_a(){  
@@ -112,12 +121,13 @@ function enumerable_to_a(){
 }
 
 function rbEnumerable(s){
- 
   this.count = enumerable_count;
   this.each = enumerable_each;
   this.each_slice = enumerable_each_slice;
   this.first = enumerable_first;
+  this.inject = enumerable_inject;  
   this.map = enumerable_map;
+  this.collect = enumerable_map;
   this.max = enumerable_max;
   this.min = enumerable_min;  
   this.minmax = enumerable_minmax;
@@ -125,7 +135,4 @@ function rbEnumerable(s){
   this.select = enumerable_select;
   this.sort = enumerable_sort;
   this.to_a = enumerable_to_a;
-
-
-  //for(x in raw_object) {this.enumerable[x] = raw_object[x]};
 }
