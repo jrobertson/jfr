@@ -106,14 +106,16 @@ function enumerable_sort(){
   a = this.temp_array;
   var a2 = [];
   for (var i = 0; i < a.length; i++){ a2.push(a[i].array); }  
-
   if (functionName(a2[0]).to_s() == 'Array') {
-    var sorted = (functionName(a2[0][0]).to_s() == 'String') ? a2.sort() 
-      : a2.sort(sortNumber);
-    //return o(sorted).map(function(x){ o(x); });
+    var sorted = (functionName(a2[0][0]).to_s() == 'String') ? a2.sort() : a2.sort(sortNumber);
     return sorted;
   }
   return a.sort();
+}
+
+function enumerable_sort_by(f){
+  a2 = this.map().with_index(function(x,i) {return [f(x),i];}).to_a();
+  return (a2.sort(sortNestedNumber));
 }
 
 function enumerable_to_a(){  
@@ -134,5 +136,6 @@ function rbEnumerable(s){
   this.reject = enumerable_reject;
   this.select = enumerable_select;
   this.sort = enumerable_sort;
+  this.sort_by = enumerable_sort_by;
   this.to_a = enumerable_to_a;
 }

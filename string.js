@@ -4,8 +4,7 @@
 function string_chr(){  return this.string.charAt(0); }
 function string_clone(){  return o(this.string); }
 
-function string_concat(obj){
-  
+function string_concat(obj){  
   this.string = this.string.concat(obj.string);
   return this;
 }
@@ -17,42 +16,29 @@ function gsub_base_inner(s2, rawPattern, unknown) {
   return s2.sub_p(rawPattern, unknown);
 }
 
-function gsub_base(s2, rawPattern, unknown) {
-  
+function gsub_base(s2, rawPattern, unknown) { 
   if (typeof unknown != 'undefined') {
-    /*while (s2.regex(rawPattern) != nil) {
-      gsub_base_inner(s2, rawPattern, unknown);
-    }*/
     var s = s2.split;
     s2.scan(rawPattern).each(function(x){
-      gsub_base_inner(s2, x, unknown);
-      
-      puts ('s2 : '  + s2.to_s());
+      gsub_base_inner(s2, x, unknown);      
     });
     return s2;
-
   }
   else {
     a = s2.scan(rawPattern);
     var desc = ' ' + o(34).chr() + '  ' +  o(34).chr() + ':' + 
       'gsub(' + rawPattern.toString() + ')';
-    //enumerator = new rb.Enumerator(s2, a, gsub_base_inner, desc);
     enumerator = new rbEnumerator(this, desc);
     return enumerator;
-  }
-  
+  }  
 }
 
-function gsub(rawPattern, newString) {
-  
+function gsub(rawPattern, newString) {  
   return gsub_base(this.clone(), rawPattern, newString);
-
 }
 
 function gsub_p(rawPattern, newString) {
-  
   return gsub_base(this, rawPattern, newString);
-
 }
 
 function string_index(pattern){ return this.string.search(pattern); }
@@ -60,28 +46,21 @@ function string_inspect() { return this.string;}
 function string_length(){return this.string.length;}
 
 function string_match(rawPattern){
-
-  var pattern = rawPattern;
-  
+  var pattern = rawPattern;  
   if (functionName(rawPattern).to_s() == 'RegExp') {
     var pattern = rawPattern.toString().slice(1, -1);
-  }
-  
+  }  
   var regex = new RegExp(pattern);  
   var rawMatch = this.string.match(regex);
-
-  if (rawMatch == null) return nil;
-  
+  if (rawMatch == null) return nil;  
   var aMatch = o(rawMatch);
   var stringMatch = aMatch.shift();
   var matchdata = new rbSys.MatchData(aMatch);
   matchdata.found_string = stringMatch;
   matchdata.regexp = regex;
-  var rbString = o(this.string);
-  
+  var rbString = o(this.string);  
   matchdata.string = rbString;
-  matchdata.pre_match = rawMatch['index'] > 0 ? 
-    rbString.range(0, rawMatch['index'] - 1) : o('');
+  matchdata.pre_match = rawMatch['index'] > 0 ? rbString.range(0, rawMatch['index'] - 1) : o('');
   matchdata.post_match = rbString.range(rawMatch['index'] + 
   stringMatch.length, -1);
   $apos = matchdata.post_match;
@@ -99,31 +78,29 @@ function string_prepend(val){
 }
 
 function string_range(x1, x2) {
-
+  
   var s = this.string;
   var r = '';
-
+  
   if (x2 != -1)
     r = s.slice(x1,x2+1);
   else
-    r = s.slice(x1);
-    
+    r = s.slice(x1);    
   return o(r);
 }
 
 function string_range3(x1, x2) {
-
   var s = this.string;
-  s.slice(x1,x2);
-  
-  if (x2 != -1)
+  s.slice(x1,x2);  
+  if (x2 != -1) {
     return s.slice(x1,x2);
-  else
+  }
+  else {
     return s.slice(x1);
+  }
 }
 
-function string_regex(pattern,index){
-  
+function string_regex(pattern,index){  
   var matchdata = this.match(pattern);
   if (matchdata == nil) return nil;
   if (typeof index == 'undefined'){
@@ -142,61 +119,44 @@ function scanx(r, pattrn, s){
   }
 }
 
-function string_scan(rawPattern, f){    
-  
+function string_scan(rawPattern, f){      
   var r = []; 
-  scanx(r, rawPattern, this); 
-  
+  scanx(r, rawPattern, this);   
   if (f) { o(r).each(f); }
-
   return o(r);
-
 }
 
 function string_set(v) { this.string = v; }
 
-function string_split(rawPattern, i){
-  
-  var result = new rbSys.Array();
-  
+function string_split(rawPattern, i){  
+  var result = new rbSys.Array();  
   if (typeof i == 'undefined') 
     result = o(this.string.split(rawPattern));
   else {
     a = o(this.string.split(rawPattern));
-    //a2 = a.slice_p(0,i-1).join();
-    a2 = a.slice_p(0,i-1);
-    
-    pattern = rawPattern;
-    
+    a2 = a.slice_p(0,i-1);    
+    pattern = rawPattern;    
     if (functionName(rawPattern).to_s() == 'RegExp') {
       pattern = rawPattern.toString().slice(1, -1);
-    }      
-    
+    }          
     result = a2.concat(a.join(pattern));
-
-  }
-  
+  }  
   return result;
 }
 
-function sub_replace(s2, rawPattern, unknown){
-  
+function sub_replace(s2, rawPattern, unknown){  
   var pattern = rawPattern;
-
   if (functionName(rawPattern).to_s() == 'RegExp') {
     pattern = rawPattern.toString().slice(1, -1);
   }
-
-  var regex = new RegExp(pattern);
-  
+  var regex = new RegExp(pattern);  
   if (functionName(unknown).to_s() == 'Function') {
     xx = s2.regex(regex);
     f = unknown;
     newString = f(xx);
   }
   else
-    newString = unknown;
-    
+    newString = unknown;    
   s2.string = s2.string.replace(regex, newString);
   return s2;
 }
@@ -215,34 +175,29 @@ function string_sprintf(a){
   a.each(function(x){
     sub_p.apply(s,[pattrn, x]);
   });
-  return this;
-  
+  return this;  
 }
 
 function string_slice(x1,x2){
-
   var s = this.string;
-  if (typeof x1 == 'undefined') return nil
-
+  if (typeof x1 == 'undefined') return nil;
   if (typeof x2 == 'undefined') {
     return s.slice(x1, x1+1);
   }
   else {
-    if (x2 > x1) return s.slice(x1, x2);
-    else return x2 < 0 ? nil : ''
+    if (x2 > x1) {return s.slice(x1, x2);}
+    else { return x2 < 0 ? nil : '';}
   }
 }
 
 function string_to_s(){return this.string;}
 function upcase()   { return this.string.toUpperCase(); }
 
-function rbString(s){
-  
+function rbString(s){  
   this.chr = string_chr;
   this.clone = string_clone;
   this.concat = string_concat;
   this.downcase = downcase;
-  //this.enum = new rb.Enumerable();
   this.get = string_get;
   this.gsub = gsub;
   this.gsub_p = gsub_p;

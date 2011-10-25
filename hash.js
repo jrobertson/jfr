@@ -93,20 +93,16 @@ function hash_merge_p(raw_h){
   return this;
 }
 
-function hash_reject(f){
-  
+function hash_reject(f){  
   var r = this.clone();
-
   for (keyName in this.hash){
     if (f(keyName, this.hash[keyName]) == true) r.delete(keyName);
   }
   return r;
 }
 
-function hash_reject_p(f){
-  
+function hash_reject_p(f){  
   var r = this.clone();
-
   for (keyName in this.hash){
     if (f(keyName, this.hash[keyName]) == true) delete this.hash[keyName];
   }
@@ -119,26 +115,21 @@ function hash_set(key, value){
   return value;
 }
 
-function hash_shift(){
-  
-  var key, value;
-  
+function hash_shift(){  
+  var key, value;  
   key = this.keys().first();
   value = this.hash[key];
-  this.delete(key);
-  
+  this.delete(key);  
   return o([key, value]) ;
 }
 
 function hash_has_value(val){ return this.values().include(val); }
 
 function hash_values_at(key_list){
-  h = this;
-
+  var h = this;
   return rb.Array.new(key_list).map(function(x){
     return h.get(x);
-  });
-  
+  });  
 }
 
 function rbHash(raw_h){
@@ -154,7 +145,6 @@ function rbHash(raw_h){
   this.inject = hash_inject;
   this.key = hash_key;
   this.keys = hash_keys;
-  //this.map = hash_map;
   this.merge = hash_merge;
   this.merge_p = hash_merge_p;
   this.reject = hash_reject;
@@ -164,24 +154,17 @@ function rbHash(raw_h){
   this.update = hash_merge_p;
   this.values = hash_values;
   this.values_at = hash_values_at;
-
   this.hash = {};
   
-  if (typeof raw_h != 'undefined') {
-    
+  if (typeof raw_h != 'undefined') {   
     var objType = functionName(raw_h);
     
     if (objType.to_s() == 'Object' || objType.regex(/^rb[A-Z]\w+/) != nil){
-
-      for (var x in raw_h){this.hash[x] = raw_h[x];}
-      
+      for (var x in raw_h){this.hash[x] = raw_h[x];}     
     }
-    else if (objType == 'Array') {
-      
-      eval("this.hash = {" + raw_h[0] + ": '" + raw_h[1] + "'};");
-      
+    else if (objType == 'Array') {      
+      eval("this.hash = {" + raw_h[0] + ": '" + raw_h[1] + "'};");      
     }
-  }
-  
+  }  
   this.find_length();  
 }

@@ -2,17 +2,15 @@
 
 // global variables
 
-$apos = ''      // stores the post_match from a regex.
-$backtick = ''  // store the pre_match from a regex.
-$tilde = null   // return the matchdata object from a regex
+$apos = '';      // stores the post_match from a regex.
+$backtick = '';  // store the pre_match from a regex.
+$tilde = null;   // return the matchdata object from a regex
 
 function range_each(f){ return o(this.array).each(f); }
 
-function step(gap, f){
-  
+function step(gap, f){  
   var a = [];
-  for (var i = 0; i < this.array.length; i = i + gap) a.push(this.array[i]);
-  
+  for (var i = 0; i < this.array.length; i = i + gap) a.push(this.array[i]);  
   if (typeof f == 'undefined') {
     return rb.Enumerator.new(o(a), this.inspect() + ':step(' + gap + ')');
   }
@@ -21,12 +19,10 @@ function step(gap, f){
 
 function range_to_a(){  return o(this.array);}
 
-function rbRange(x1,x2){
-  
+function rbRange(x1,x2){  
   this.custom_each = range_each;
   this.inspect = function(){ return x1 + '..' + x2;};
-  this.step = step;
-  
+  this.step = step;  
   this.array = [];
   for (var i = x1; i < x2; i++) this.array.push(i);
 }
@@ -41,7 +37,6 @@ function fixnum_inspect(){  return this.num; }
 function rbFixnum(val){
   this.chr = fixnum_chr;
   this.inspect = fixnum_inspect;
-  //fixnum_num
   this.num = val;
 }
 
@@ -49,7 +44,7 @@ function rbFixnum(val){
 // Ruby Object methods
 
 function object_is_a(name){
-  return this.class().to_s() == name
+  return (this.class().to_s() == name);
 }
 
 function object_methods(){
@@ -76,12 +71,9 @@ function rbObject(){
 function matchdata_captures(){  return this.rb_array; }
 function matchdata_to_s(){ return this.found_string; }
 function matchdata_inspect(){ 
-  //return this.class() + ' ' + this.string;
-  //#<MatchData "fu" 1:"fu" 2:"u">
   items = this.captures().map().with_index(function(x,i){
     return (i+1) + ':' + o(34).chr() + x + o(34).chr();
   }).join(' ').to_s();
-
   return "#<MatchData " + o(34).chr() + this.found_string + o(34).chr()
     + " "  + items + ">";
 }
@@ -108,8 +100,7 @@ function now_to_a(){
   return rb.Array.new([sec(), min(), hour(), day(), month(), year(), wday()]);
 }
 
-function now_to_s(){
-  
+function now_to_s(){  
 }
 
 function wday(){ return new Date().getUTCDay(); }
@@ -132,7 +123,6 @@ rbNow = {
 }
 
 function time_now(){
-  // the format we want 2011-09-23 16:45:51 +0100
   var raw_a = [year(), month(), day(), hour(), min(), sec()];      
   return o("%s-%s-%s %s:%s:%s").sprintf(o(raw_a));
 }
@@ -185,15 +175,12 @@ function array_to_hash(a){
 }
 
 function Hash(obj){
-
-  var h = {};
-  
+  var h = {};  
   if (typeof obj == 'undefined') return o({});
   else {
     if (functionName(obj).to_s() != 'rbArray')
       a = o(o(arguments).values().each_slice(2).to_a());
     else a = obj;
-
     return array_to_hash(a);
   }
 }
@@ -201,16 +188,15 @@ function Hash(obj){
 
 // automatically creates a ruby object from a native object
 function o(datatype){
-  //puts ('datatype : ' + datatype);
   return (typeof datatype != 'undefined') ? new rbSys[rbType(datatype)](datatype) : datatype;
 }
 
 // equivalent to %w
 function pw(raw_o){
   a = new rbSys.String(raw_o).split(/\s/).select(function(x){
-    return x.length > 0
+    return (x.length > 0);
   });
-  return a
+  return a;
 }
 
 function puts(s){console.log(s);}
@@ -222,6 +208,10 @@ function rbEval(){
 
 function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 function sortNumber(a,b) {return a - b;}
+
+function sortNestedNumber(a, b){ 
+  return o(a.first().toString()).ord() - o(b.first().toString()).ord(); 
+}
 
 // -------------------------
 
@@ -265,7 +255,7 @@ function pw(raw_o){
   a = new rbSys.String(raw_o).split(/\s/).select(function(x){
     return x.length > 0
   });
-  return a
+  return a;
 }
 
 
