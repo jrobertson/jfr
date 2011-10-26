@@ -153,10 +153,11 @@ function sub_replace(s2, rawPattern, unknown){
   if (functionName(unknown).to_s() == 'Function') {
     xx = s2.regex(regex);
     f = unknown;
-    newString = f(xx);
+    var newString = f(xx);
   }
-  else
-    newString = unknown;    
+  else {
+    var newString = unknown;    
+  }
   s2.string = s2.string.replace(regex, newString);
   return s2;
 }

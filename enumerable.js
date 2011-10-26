@@ -103,7 +103,7 @@ function enumerable_select(f){
 
 function enumerable_sort(){ 
   this.each();
-  a = this.temp_array;
+  var a = this.temp_array;
   var a2 = [];
   for (var i = 0; i < a.length; i++){ a2.push(a[i].array); }  
   if (functionName(a2[0]).to_s() == 'Array') {
@@ -114,8 +114,18 @@ function enumerable_sort(){
 }
 
 function enumerable_sort_by(f){
-  a2 = this.map().with_index(function(x,i) {return [f(x),i];}).to_a();
-  return (a2.sort(sortNestedNumber));
+  var a2 = this.map().with_index(function(x,i) {return [f(x),i];}).to_a();
+  var a3 = a2.sort(sortNestedNumber);
+  var a = this.to_a();
+  
+  if (this.is_a('Hash')) {
+    return o(a3).inject({},function(r,x){ 
+      y = a[x.last()];  return r.merge( Hash(y.first(), y.last()) ); 
+    });
+  }
+  else {
+    return a3;
+  }
 }
 
 function enumerable_to_a(){  
