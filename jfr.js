@@ -6,7 +6,7 @@ $apos = '';      // stores the post_match from a regex.
 $backtick = '';  // store the pre_match from a regex.
 $tilde = null;   // return the matchdata object from a regex
 
-function range_each(f){ return o(this.array).each(f); }
+function range_each(f){ o(this.array).each(f); }
 
 function step(gap, f){  
   var a = [];
@@ -34,10 +34,18 @@ function fixnum_chr(code){
 
 function fixnum_inspect(){  return this.num; }
 
+function fixnum_times(){
+  e = rb.Range.new(0,this.num);
+  e.desc = '#<Enumerator: ' + this.num + ':times>';
+  return e;
+}
+
+
 function rbFixnum(val){
   this.chr = fixnum_chr;
   this.inspect = fixnum_inspect;
   this.num = val;
+  this.times = fixnum_times;
 }
 
 

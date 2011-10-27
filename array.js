@@ -269,7 +269,8 @@ function rbArray(i, obj){
       else {
         this.array = new Array;
         for (var j = 0; j < i.length; j++) { 
-          var item = (typeof i[j] != 'undefined' && functionName(i[j]).to_s() == 'Array') ? o(i[j]) : i[j];
+          var item = (typeof i[j] != 'undefined' && (functionName(i[j]).to_s() 
+            == 'Array' || functionName(i[j]).to_s() == 'Hash' )) ?  o(i[j]) : i[j];
           this.array.push(item);
         }
       }
