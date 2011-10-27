@@ -120,12 +120,10 @@ function enumerable_sort_by(f){
   
   if (this.is_a('Hash')) {
     return o(a3).inject({},function(r,x){ 
-      y = a[x.last()];  return r.merge( Hash(y.first(), y.last()) ); 
+      var y = a[x.last()];  return r.merge( Hash(y.first(), y.last()) ); 
     });
   }
-  else {
-    return a3;
-  }
+  else {  return o(a3).map(function(x){  return a.at(x.last());  });  }
 }
 
 function enumerable_to_a(){  

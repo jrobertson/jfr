@@ -77,11 +77,9 @@ function string_prepend(val){
   this.string = val.concat(this.string);
 }
 
-function string_range(x1, x2) {
-  
+function string_range(x1, x2) {  
   var s = this.string;
-  var r = '';
-  
+  var r = '';  
   if (x2 != -1)
     r = s.slice(x1,x2+1);
   else
