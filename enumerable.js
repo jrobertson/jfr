@@ -123,7 +123,7 @@ function enumerable_sort_by(f){
       var y = a[x.last()];  return r.merge( Hash(y.first(), y.last()) ); 
     });
   }
-  else {  return o(a3).map(function(x){  return a.at(x.last());  });  }
+  else {  return o(a3).map(function(x){  return a[x.last()];  });  }
 }
 
 function enumerable_to_a(){  
