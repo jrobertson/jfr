@@ -77,9 +77,12 @@ function scan_a(raw_a) {
       a.push(scan_a(x));
     }
     else {
-      a.push((functionName(x).to_s() == 'Number' || 
-        (functionName(x).to_s() == 'String' && x[0] == ':')) ?
-          x : '"' + x + '"');
+      var type = functionName(x).to_s();      
+      if (type == 'Number' || type == 'String' || type == 'rbHash'){
+        if (type == 'Number' || (type == 'String' && x[0] == ':') ) { a.push(x);}
+        if (type == 'rbHash') { a.push(x.inspect()); }
+      }
+      else { a.push('"' + x + '"'); }
     }
   });
   return '[' + a.join(', ') + ']';
@@ -268,9 +271,9 @@ function rbArray(i, obj){
       }
       else {
         this.array = new Array;
-        for (var j = 0; j < i.length; j++) { 
+        for (var j = 0; j < i.length; j++) {
           var item = (typeof i[j] != 'undefined' && (functionName(i[j]).to_s() 
-            == 'Array' || functionName(i[j]).to_s() == 'Hash' )) ?  o(i[j]) : i[j];
+            == 'Array' || functionName(i[j]).to_s() == 'Object' )) ?  o(i[j]) : i[j];
           this.array.push(item);
         }
       }
