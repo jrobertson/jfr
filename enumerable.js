@@ -114,16 +114,22 @@ function enumerable_sort(){
 }
 
 function enumerable_sort_by(f){
-  var a2 = this.map().with_index(function(x,i) {return [f(x),i];}).to_a();
+  var a2 = this.map().with_index(function(x,i) {
+    raw_val = f(x);
+    val = isNaN(raw_val) ? raw_val.to_s() : raw_val;
+    return [val,i];
+  }).to_a();
   var a3 = a2.sort(sortNestedNumber);
-  var a = this.to_a();
-  
+  var a = this.to_a();  
   if (this.is_a('Hash')) {
     return o(a3).inject({},function(r,x){ 
-      var y = a[x.last()];  return r.merge( Hash(y.first(), y.last()) ); 
+      var y = a[x.last()];  return r.merge( Hash(y.first().to_s(), y.last().to_s()) ); 
     });
   }
-  else {  return o(a3).map(function(x){  return a[x.last()];  });  }
+  else {  
+    var r = o(a3).map(function(x){  return a[x.last().to_s()];  });  
+    return r;
+  }  
 }
 
 function enumerable_to_a(){  

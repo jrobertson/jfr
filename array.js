@@ -12,7 +12,6 @@ function array_compact_p(){ this.array = this.compact().array; return this;}
 function array_concat(rawObj){
   obj = rawObj;
   if (functionName(obj) == 'Array' || functionName(obj) == 'String') {
-    puts ('dude : ' + functionName(obj));
     obj = o(rawObj);
   }
   puts ('here typeof' + (typeof obj));
@@ -27,21 +26,17 @@ function array_delete_at(i){
   return r;
 }
 
-function array_detect(f){
-  
-  var r = [], bFlag = false, i = 0;
-    
+function array_detect(f){  
+  var r = [], bFlag = false, i = 0;    
   do { 
     if (f(this.array[i]) == true) {
       r = this.array[i];
       bFlag = true;
     }
     i++;
-  }  while (bFlag == false && i < this.array.length)
-  
+  }  while (bFlag == false && i < this.array.length)  
   type = rbType(r);
   return type ? rb[type].new(r) : r;
-
 }
 
 function array_each(f){  
@@ -78,9 +73,11 @@ function scan_a(raw_a) {
     }
     else {
       var type = functionName(x).to_s();      
-      if (type == 'Number' || type == 'String' || type == 'rbHash'){
-        if (type == 'Number' || (type == 'String' && x[0] == ':') ) { a.push(x);}
-        if (type == 'rbHash') { a.push(x.inspect()); }
+      if (type != 'undefined'){
+        if (type == 'Number' || (type == 'String' && x[0] == ':'))  { a.push(x);}
+        if (type == 'rbHash' || type == 'rbString' || type == 'rbFixnum') 
+          { a.push(x.inspect()); }
+        else { a.push('"' + x + '"'); }
       }
       else { a.push('"' + x + '"'); }
     }
@@ -90,8 +87,7 @@ function scan_a(raw_a) {
 
 function array_inspect(){  return scan_a(this);}
 
-function array_join(separator){
-  
+function array_join(separator){  
   if (typeof separator == 'undefined') {
     var s = this.inject('',function(r,x){return r + x});
     return o(s)
@@ -105,8 +101,7 @@ function array_join(separator){
 
 function array_map_p(f){ this.array = this.map(f);  return this;}
 
-function array_partition(f){
-  
+function array_partition(f){  
   var a_true = new rbArray(), a_false = new rbArray();
   this.each(function(x){ (f(x) == true) ? a_true.push(x) : a_false.push(x); });
   return new rbArray([a_true, a_false]);
@@ -114,8 +109,7 @@ function array_partition(f){
 
 function array_range(x1,x2){  
   var a = this.array;
-  var result;
-  
+  var result;  
   if (x2 != -1) {
     x2++;
     result = a.slice(x1,x2);
@@ -272,8 +266,10 @@ function rbArray(i, obj){
       else {
         this.array = new Array;
         for (var j = 0; j < i.length; j++) {
-          var item = (typeof i[j] != 'undefined' && (functionName(i[j]).to_s() 
-            == 'Array' || functionName(i[j]).to_s() == 'Object' )) ?  o(i[j]) : i[j];
+          var item = (functionName(i[j]).to_s() == 'Object' || 
+            functionName(i[j]).to_s() == 'String' ||
+            functionName(i[j]).to_s() == 'Array' || 
+            functionName(i[j]).to_s() == 'Number') ? o(i[j]) : i[j];
           this.array.push(item);
         }
       }

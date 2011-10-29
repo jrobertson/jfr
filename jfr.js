@@ -32,8 +32,8 @@ function fixnum_chr(code){
   return String.fromCharCode(this.num);
 }
 
-function fixnum_inspect(){  return this.num; }
-
+function fixnum_inspect(){  return this.to_s(); }
+function fixnum_to_s(){ return this.num.toString(); }
 function fixnum_times(){
   e = rb.Range.new(0,this.num);
   e.desc = '#<Enumerator: ' + this.num + ':times>';
@@ -45,6 +45,7 @@ function rbFixnum(val){
   this.chr = fixnum_chr;
   this.inspect = fixnum_inspect;
   this.num = val;
+  this.to_s = fixnum_to_s;
   this.times = fixnum_times;
 }
 
@@ -131,8 +132,8 @@ rbNow = {
 }
 
 function time_now(){
-  var raw_a = [year(), month(), day(), hour(), min(), sec()];      
-  return o("%s-%s-%s %s:%s:%s").sprintf(o(raw_a));
+  var a = o([year(), month(), day(), hour(), min(), sec()]);    
+  return o("%s-%s-%s %s:%s:%s").sprintf(a);
 }
 
 rbTime = {  now: time_now  }
@@ -152,7 +153,6 @@ function rbNilClass() {
   this.inspect = nil_inspect;
 }
 
-
 function random_rand(upper){
   return Math.floor(Math.random()*upper);
 }
@@ -160,17 +160,28 @@ function random_rand(upper){
 function rbRandom(seed){
   this.rand = random_rand;
 }
+
+function proc_call(){ return this.f()}
+function proc_to_s(){ return this.f.toString(); }
+
+function rbProc(f){
+  this.f = f;
+  this.to_s = proc_to_s;
+  this.call = proc_call;
+}
 // -------------------------
 
 
 function functionName(object){
+  if (typeof object == 'undefined') return new rbSys.String('');
   var rawName = object.constructor.toString().slice(9);
   var pos = rawName.indexOf('(',0);
   return new rbSys.String(rawName.slice(0, pos));
 }
 
 function rbType(datatype){
-  var rtype = {String: 'String', Array: 'Array', Number: 'Fixnum', Object: 'Hash'};
+  var rtype = {String: 'String', Array: 'Array', Number: 'Fixnum', 
+    Object: 'Hash', Function: 'Proc'};
   return rtype[functionName(datatype).to_s()];  
 }
 
@@ -218,7 +229,7 @@ function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 function sortNumber(a,b) {return a - b;}
 
 function sortNestedNumber(a, b){ 
-  return o(a.first().toString()).ord() - o(b.first().toString()).ord(); 
+  return o(a.first().to_s().toString()).ord() - o(b.first().to_s().toString()).ord(); 
 }
 
 // -------------------------
@@ -227,7 +238,8 @@ function sortNestedNumber(a, b){
 rbSys = {  Array: rbArray, String: rbString, Range: rbRange, 
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
-        NilClass: rbNilClass, Enumerator: rbEnumerator, Random: rbRandom
+        NilClass: rbNilClass, Enumerator: rbEnumerator, Random: rbRandom,
+        Proc: rbProc
      }
 
         //
@@ -248,13 +260,13 @@ nil = new rbNilClass;
 
 rbList.keys().each(function(class_key) {
   new rbSys.Hash(new rbSys.Object).each_pair(function(method_key, method_val){
-    rbSys[class_key].prototype[method_key] = method_val;
+    rbSys[class_key.to_s()].prototype[method_key] = method_val.f;
   });
 });
 
 new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class_name){
   new rbSys.Hash(new rbSys.Enumerable).each_pair(function(method_key, method_val){
-    rbSys[class_name].prototype[method_key] = method_val;
+    rbSys[class_name.to_s()].prototype[method_key] = method_val.f;
   });
 });
 
@@ -281,6 +293,3 @@ rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj,
         NilClass: rbNilClass, Enumerator: rbEnumeratorObj, Random: rbRandomObj
      }
 
-
-a = [['dff','rewer'],'werrt'];
-o(a);

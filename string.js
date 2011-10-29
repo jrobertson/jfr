@@ -101,6 +101,7 @@ function string_range3(x1, x2) {
 function string_regex(pattern,index){  
   var matchdata = this.match(pattern);
   if (matchdata == nil) return nil;
+  
   if (typeof index == 'undefined'){
     return o(matchdata.to_s());
   }
@@ -172,7 +173,7 @@ function string_sprintf(a){
   var s = this;
   var pattrn = '%s';
   a.each(function(x){
-    sub_p.apply(s,[pattrn, x]);
+    sub_p.apply(s,[pattrn, x.to_s()]);
   });
   return this;  
 }

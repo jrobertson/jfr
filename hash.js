@@ -58,7 +58,7 @@ function hash_find_length(){
 function hash_inspect(){
   var a = [];  
   this.each_pair(function(k,v){
-    a.push(':' + k + '=>"' + v + '"');
+    a.push(':' + k + '=>"' + v.inspect() + '"');
   });
   return "{" + a.join(', ') + "}";  
 }
@@ -157,10 +157,10 @@ function rbHash(raw_h){
   this.hash = {};
   
   if (typeof raw_h != 'undefined') {   
-    var objType = functionName(raw_h);
     
-    if (objType.to_s() == 'Object' || objType.regex(/^rb[A-Z]\w+/) != nil){
-      for (var x in raw_h){this.hash[x] = raw_h[x];}     
+    var objType = functionName(raw_h);    
+    if (objType.to_s() == 'Object' || objType.to_s().slice(0,2) == 'rb'){
+      for (var x in raw_h){this.hash[x] = o(raw_h[x]);}     
     }
     else if (objType == 'Array') {      
       eval("this.hash = {" + raw_h[0] + ": '" + raw_h[1] + "'};");      
