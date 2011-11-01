@@ -80,10 +80,10 @@ function string_prepend(val){
 function string_range(x1, x2) {  
   var s = this.string;
   var r = '';  
-  if (x2 != -1)
-    r = s.slice(x1,x2+1);
-  else
-    r = s.slice(x1);    
+  if (x2 != -1) {
+    r = s.slice(x1,x2+1);}
+  else {
+    r = s.slice(x1);  }
   return o(r);
 }
 

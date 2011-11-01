@@ -50,6 +50,7 @@ function rbFixnum(val){
   this.num = val;
   this.to_f = fixnum_to_f;
   this.to_i = fixnum_to_i;
+  this.to_n = fixnum_to_n;
   this.to_s = fixnum_to_s;
   this.times = fixnum_times;
 }
@@ -236,7 +237,12 @@ function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
 function sortNumber(a,b) {return a - b;}
 
 function sortNestedNumber(a, b){ 
-  return o(a.first().to_s().toString()).ord() - o(b.first().to_s().toString()).ord(); 
+  if (isNaN(a.first().to_s().toString())) {
+    return o(a.first().to_s().toString()).ord() - o(b.first().to_s().toString()).ord();
+  }
+  else {
+    return (a.first().to_i() - b.first().to_i());  
+  }
 }
 
 // -------------------------

@@ -184,7 +184,7 @@ function array_push(){
   for (var x in arguments){this.array.push(arguments[x]);}  
 }
 
-function reverse(){  return this.array.reverse();}
+function array_reverse(){ return rb.Array.new(this.array.reverse());}
 
 function array_unshift(){
   for (x in arguments){this.array.unshift(arguments[x]);}  
@@ -244,7 +244,7 @@ function rbArray(i, obj){
   this.push = array_push;  
   this.range = array_range;
   this.reject_p = array_reject_p;
-  this.reverse = reverse;
+  this.reverse = array_reverse;
   this.select_p = array_select_p;
   this.set = array_set;
   this.shift = array_shift;
