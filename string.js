@@ -190,6 +190,9 @@ function string_slice(x1,x2){
   }
 }
 
+function string_to_f(){return parseFloat(this.string);}
+function string_to_i(){return parseInt(this.string);}
+function string_to_n(){return this.string;}
 function string_to_s(){return this.string;}
 function upcase()   { return this.string.toUpperCase(); }
 
@@ -216,6 +219,9 @@ function rbString(s){
   this.sprintf = string_sprintf;
   this.sub = sub;
   this.sub_p = sub_p;
+  this.to_f = string_to_f;
+  this.to_i = string_to_i;
+  this.to_n = string_to_n;
   this.to_s = string_to_s;
   this.upcase = upcase;  
   this.string = String(s);

@@ -33,6 +33,9 @@ function fixnum_chr(code){
 }
 
 function fixnum_inspect(){  return this.to_s(); }
+function fixnum_to_f(){ return parseFloat(this.num); }
+function fixnum_to_i(){ return parseInt(this.num); }
+function fixnum_to_n(){ return this.num; }
 function fixnum_to_s(){ return this.num.toString(); }
 function fixnum_times(){
   e = rb.Range.new(0,this.num);
@@ -45,6 +48,8 @@ function rbFixnum(val){
   this.chr = fixnum_chr;
   this.inspect = fixnum_inspect;
   this.num = val;
+  this.to_f = fixnum_to_f;
+  this.to_i = fixnum_to_i;
   this.to_s = fixnum_to_s;
   this.times = fixnum_times;
 }
@@ -189,7 +194,7 @@ function rbType(datatype){
 
 function array_to_hash(a){
   var h = {};
-  a.each(function(x){ h[x.first()] = x.last(); });
+  a.each(function(x){ h[x.first().to_n()] = x.last().to_n(); });
   return o(h);
 }
 
@@ -207,13 +212,15 @@ function Hash(obj){
 
 // automatically creates a ruby object from a native object
 function o(datatype){
-  return (typeof datatype != 'undefined') ? new rbSys[rbType(datatype)](datatype) : datatype;
+  return (typeof datatype != 'undefined' && 
+    datatype.constructor.toString().slice(9,11) != 'rb') 
+      ? new rbSys[rbType(datatype)](datatype) : datatype;
 }
 
 // equivalent to %w
 function pw(raw_o){
   a = new rbSys.String(raw_o).split(/\s/).select(function(x){
-    return (x.length > 0);
+    return (x.to_s().length > 0);
   });
   return a;
 }
@@ -270,13 +277,6 @@ new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class_na
   });
 });
 
-// equivalent to %w
-function pw(raw_o){
-  a = new rbSys.String(raw_o).split(/\s/).select(function(x){
-    return x.length > 0
-  });
-  return a;
-}
 
 
 rbArrayObj = {new: function(x,y){return new rbSys.Array(x,y)}};

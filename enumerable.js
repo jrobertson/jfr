@@ -23,16 +23,18 @@ function enumerable_each(f){
 function enumerable_each_slice(gap,f){
   var a = this;  
   if (typeof f == 'undefined') {    
-    var a2 = rb.Range.new(0, a.length()).step(gap).map(function(i){ 
+    var a2 = rb.Range.new(0, a.length()).step(gap).map(function(obj_i){ 
+      var i = obj_i.to_i();
       return o((i + 1 < a.length()) ? 
-        [a.at(i), a.at(i+1)] : [a.at(i)]);
+        [a.at(i).to_n(), a.at(i+1).to_n()] : [a.at(i).to_n()]);
     });
     return rb.Enumerator.new(a2, this.inspect() + ':each_slice(' + gap + ')');
   }
   else {
-    this.temp_array = rb.Range.new(0, a.length()).step(gap).map(function(i){ 
+    this.temp_array = rb.Range.new(0, a.length()).step(gap).map(function(obj_i){ 
+      var i = obj_i.to_i();
       return f((i + 1 < a.length()) ? 
-        [a.at(i), a.at(i+1)] : [a.at(i)]);
+        [a.at(i).to_n(), a.at(i+1).to_n()] : [a.at(i).to_n()]);
     });    
   }
 }
