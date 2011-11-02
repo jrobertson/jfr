@@ -1,11 +1,13 @@
 // file: array.js
 
-function array_at(index){ 
+function array_at(raw_index){ 
+  var index = (raw_index >= 0) ? raw_index : this.array.length + raw_index;
   var r = this.array[index]; 
   return r != null ? r : nil
 }
 
 function array_clear(){ this.array = [];}
+function array_clone(){ return  o(this.array); }
 function array_compact(){ return this.reject(function(x){return x == nil;});}
 function array_compact_p(){ this.array = this.compact().array; return this;}
 
@@ -216,6 +218,7 @@ function scan_a2(a){
 function rbArray(i, obj){
   this.at = array_at;
   this.clear = array_clear;
+  this.clone = array_clone;
   this.compact = array_compact;
   this.compact_p = array_compact_p;
   this.concat = array_concat;

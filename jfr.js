@@ -92,10 +92,14 @@ function matchdata_inspect(){
   return "#<MatchData " + this.found_string.inspect() + " "  + items + ">";
 }
 
-function matchdata_valuesat(){
-  
+function matchdata_values_at(){
+  var a = this.rb_array.clone();
+  a.unshift(this.found_string);
+  return o(arguments).values().map(function(x){ 
+    return a.at(x.to_i()); 
+  });
 }
-
+//  
 function rbMatchData(a){
   this.regexp = null;
   this.captures = matchdata_captures;
@@ -105,7 +109,7 @@ function rbMatchData(a){
   this.found_string = '';
   this.string = '';
   this.to_s = matchdata_to_s;
-  this.value_at = matchdata_valuesat;
+  this.values_at = matchdata_values_at;
   this.rb_array = a;
 }
 
