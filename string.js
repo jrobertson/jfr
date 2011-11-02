@@ -42,7 +42,7 @@ function gsub_p(rawPattern, newString) {
 }
 
 function string_index(pattern){ return this.string.search(pattern); }
-function string_inspect() { return this.string;}
+function string_inspect() { return '"' + this.string + '"';}
 function string_length(){return this.string.length;}
 
 function string_match(rawPattern){

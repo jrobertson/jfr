@@ -87,10 +87,13 @@ function matchdata_captures(){  return this.rb_array; }
 function matchdata_to_s(){ return this.found_string; }
 function matchdata_inspect(){ 
   items = this.captures().map().with_index(function(x,i){
-    return (i+1) + ':' + o(34).chr() + x + o(34).chr();
+    return (i+1) + ':' + x.inspect();
   }).join(' ').to_s();
-  return "#<MatchData " + o(34).chr() + this.found_string + o(34).chr()
-    + " "  + items + ">";
+  return "#<MatchData " + this.found_string.inspect() + " "  + items + ">";
+}
+
+function matchdata_valuesat(){
+  
 }
 
 function rbMatchData(a){
@@ -102,7 +105,8 @@ function rbMatchData(a){
   this.found_string = '';
   this.string = '';
   this.to_s = matchdata_to_s;
-  this.rb_array = a;  
+  this.value_at = matchdata_valuesat;
+  this.rb_array = a;
 }
 
 function sec(){ return new Date().getSeconds(); }

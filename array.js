@@ -10,14 +10,7 @@ function array_compact(){ return this.reject(function(x){return x == nil;});}
 function array_compact_p(){ this.array = this.compact().array; return this;}
 
 function array_concat(rawObj){
-  obj = rawObj;
-  if (functionName(obj) == 'Array' || functionName(obj) == 'String') {
-    obj = o(rawObj);
-  }
-  puts ('here typeof' + (typeof obj));
-  puts ('here constructor' + (obj.constructor.slice(0,20)));
-  native_obj = obj.is_a('Array') ? obj.array : obj.string
-  this.array = this.array.concat(native_obj);
+  this.array = this.array.concat(o(rawObj));
   return this;
 }
 
@@ -89,11 +82,11 @@ function array_inspect(){  return scan_a(this);}
 
 function array_join(separator){  
   if (typeof separator == 'undefined') {
-    var s = this.inject('',function(r,x){return r + x});
+    var s = this.inject('',function(r,x){return r + x.to_n()});
     return o(s)
   }
   else {
-    var s = this.inject('',function(r,x){return r + separator + x});
+    var s = this.inject('',function(r,x){return r + separator + x.to_n()});
     var i = separator.length;
     return o(s).range(i,-1);
   } 
