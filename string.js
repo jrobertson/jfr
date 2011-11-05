@@ -9,7 +9,7 @@ function string_concat(obj){
   return this;
 }
 
-function downcase() { return this.string.toLowerCase(); }
+function downcase() { return o(this.string.toLowerCase()); }
 function string_get()  { return this.string; }
 
 function gsub_base_inner(s2, rawPattern, unknown) {
@@ -161,6 +161,11 @@ function sub_replace(s2, rawPattern, unknown){
   return s2;
 }
 
+function string_succ(){
+  var s = this.string;
+  return isNaN(s) ? o(o(s).ord() + 1).chr(): o(parseInt(s) + 1);
+}
+
 function sub(rawPattern, unknown) {  
   return sub_replace(this.clone(), rawPattern, unknown);
 }
@@ -215,6 +220,7 @@ function rbString(s){
   this.scan = string_scan;
   this.set = string_set;
   this.slice = string_slice;
+  this.succ = string_succ;
   this.split = string_split;
   this.sprintf = string_sprintf;
   this.sub = sub;

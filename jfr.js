@@ -29,7 +29,7 @@ function rbRange(x1,x2){
 
 
 function fixnum_chr(code){
-  return String.fromCharCode(this.num);
+  return o(String.fromCharCode(this.num));
 }
 
 function fixnum_inspect(){  return this.to_s(); }
@@ -167,6 +167,12 @@ function rbNilClass() {
   this.inspect = nil_inspect;
 }
 
+function regexp_match(){
+}
+function rbRegExp() {
+  this.match = regexp_match;
+}
+
 function random_rand(upper){
   return Math.floor(Math.random()*upper);
 }
@@ -260,7 +266,7 @@ rbSys = {  Array: rbArray, String: rbString, Range: rbRange,
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
         NilClass: rbNilClass, Enumerator: rbEnumerator, Random: rbRandom,
-        Proc: rbProc
+        Proc: rbProc, RegExp: rbRegExp
      }
 
         //
