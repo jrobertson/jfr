@@ -10,6 +10,8 @@ function string_concat(obj){
 }
 
 function downcase() { return o(this.string.toLowerCase()); }
+
+function string_empty_b() {return this.string.length <= 0 ? true : false;}
 function string_get()  { return this.string; }
 
 function gsub_base_inner(s2, rawPattern, unknown) {
@@ -205,6 +207,7 @@ function rbString(s){
   this.chr = string_chr;
   this.clone = string_clone;
   this.concat = string_concat;
+  this.empty_b = string_empty_b;
   this.downcase = downcase;
   this.get = string_get;
   this.gsub = gsub;
