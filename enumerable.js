@@ -39,19 +39,20 @@ function enumerable_each_slice(gap,f){
   }
 }
 
-function each_cons(increment, f){
+function enumerable_each_cons(increment, f){
+  var obj_a = o(this.array);
   if (typeof f == 'undefined') {
-    var a = this.array.range(0,-2).map().with_index(function(x,i){ 
-      return a.range(i, i + increment - 1);
+    var a = obj_a.range(0,-2).map().with_index(function(x,i){ 
+      return obj_a.range(i, i + increment - 1);
     });
     var desc = this.inspect() + ':each_cons(' + increment + ')';
     this.temp_array = a;
     this.last_method = 'each';
-    var enumerator = new rbSys.Enumerator(this, desc);
+    return rb.Enumerator.new(a, desc);
   }
   else {
-    this.array.range(0,-2).each().with_index(function(x,i){ 
-      f(a.range(i, i + increment - 1));
+    obj_a.range(0,-2).each().with_index(function(x,i){ 
+      f(obj_a.range(i, i + increment - 1));
     });    
   }
 }
@@ -141,6 +142,7 @@ function enumerable_to_a(){
 function rbEnumerable(s){
   this.count = enumerable_count;
   this.each = enumerable_each;
+  this.each_cons = enumerable_each_cons;
   this.each_slice = enumerable_each_slice;
   this.first = enumerable_first;
   this.inject = enumerable_inject;  
