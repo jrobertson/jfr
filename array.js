@@ -12,7 +12,18 @@ function array_compact(){ return this.reject(function(x){return x == nil;});}
 function array_compact_p(){ this.array = this.compact().array; return this;}
 
 function array_concat(rawObj){
-  this.array = this.array.concat(o(rawObj));
+  var item = o(rawObj);
+  if (functionName(item).to_s() == 'rbArray'){
+    var temp_array = this.array;
+    item.each(function(x){
+      puts ('x: ' + x);
+      temp_array = temp_array.concat(x);
+    });
+    this.array = temp_array;
+  }
+  else {
+    this.array = this.array.concat(item);
+  }
   return this;
 }
 
@@ -35,10 +46,12 @@ function array_detect(f){
 }
 
 function array_each(f){  
+  puts('array_each');
   var a = [];
   for (var i = 0; i < this.array.length; i++) {
     a.push(f(this.array[i]));
   }
+  puts('array_each returning ' + a)
   return a;
 }
 

@@ -9,6 +9,7 @@ function enumerable_count(){
 }
 
 function enumerable_each(f){  
+  puts ('enumerable_each');
   if (typeof f == 'undefined') {  
     var desc = this.inspect() + ':each';
     this.temp_array = this.to_a();
@@ -64,9 +65,10 @@ function enumerable_first(){
 
 // e.g. a2.inject({},function(r,x){ return r.merge(Hash(x.first(),x.last())); });
 function enumerable_inject(arg, f){
-  var rtype = {String: arg, Object: new rbHash(), Array: '', Number: arg};
+  var rtype = {String: arg, Object: new rbHash(), Array: new rbArray(arg), Number: arg};
   var result = rtype[functionName(arg).to_s()];
-  this.each(function(x){ result = f(result, x);  });
+  this.each(function(x){ result = f(result, x); puts ('x2 inside_enumerable_inject' + result[0]); });
+  puts('result : ' + result[0]);
   return result;
 }
 
