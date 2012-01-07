@@ -47,7 +47,7 @@ function fixnum_times(){
 function rbFixnum(val){
   this.chr = fixnum_chr;
   this.inspect = fixnum_inspect;
-  this.num = val;
+  this.num = parseInt(val);
   this.to_f = fixnum_to_f;
   this.to_i = fixnum_to_i;
   this.to_n = fixnum_to_n;
@@ -58,14 +58,11 @@ function rbFixnum(val){
 
 // Ruby Object methods
 
-function object_is_a(name){
-  return (this.class().to_s() == name);
-}
+function object_is_a(name)   {  return (this.class().to_s() == name); }
+function object_method(label){  return new rbSys.Method(this, label); }
 
 function object_methods(){
-  var a = [];
-  for (x in this){a.push(':' + x);}
-  return rb.Array.new(a);
+  return rb.Hash.new(this).keys().map(function(x){return ':' + x.to_s();});
 }
 
 function object_respond_to(raw_method){
@@ -73,13 +70,28 @@ function object_respond_to(raw_method){
   return this.public_methods().include(method);
 }
 
+function object_send(method_name){
+  return this.method(method_name).call();
+}
+
+function object_to_enum(raw_method){
+    var desc = this.inspect() + ':each';
+    this.temp_array = this.to_a();
+    this.last_method = 'each';
+    return rb.Enumerator.new(this, desc);
+
+}
+
 function object_class(){ return functionName(this).sub(/^rb/,''); }
 
 function rbObject(){
   this.is_a = object_is_a;
+  this.method = object_method;
   this.methods = object_methods;
   this.public_methods = object_methods;
   this.respond_to = object_respond_to;
+  this.send = object_send;
+  this.to_enum = object_to_enum; //still to do 05-01-2012
   this.class = object_class;
 }
 
@@ -181,14 +193,50 @@ function rbRandom(seed){
   this.rand = random_rand;
 }
 
-function proc_call(){ return this.f()}
-function proc_to_s(){ return this.f.toString(); }
+function proc_call()   { return this.f();                     }
+function proc_inspect(){ return '#<Proc:0x86b15f4@(irb):39>'; }
+function proc_to_s()   { return this.f.toString();            }
 
 function rbProc(f){
   this.f = f;
   this.to_s = proc_to_s;
+  this.inspect = proc_inspect;
   this.call = proc_call;
 }
+
+function method_call(){ return this.obj[this.method_name]();}
+
+function method_inspect(){
+  return '#<Method: ' + this.obj.class().to_s() + '#' + 
+    this.method_name + '>'  ;
+}
+
+function rbMethod(obj, method_name){
+  
+  this.method_name = method_name;
+  this.inspect = method_inspect;
+  this.obj = obj;
+  this.call = method_call;
+  
+}
+
+
+function float_inspect(){  return this.to_s(); }
+function float_to_f(){ return parseFloat(this.num); }
+function float_to_i(){ return parseInt(this.num); }
+function float_to_n(){ return this.num; }
+function float_to_s(){ return this.num.toString(); }
+
+
+function rbFloat(val){
+  this.inspect = float_inspect;
+  this.num = val;
+  this.to_f = float_to_f;
+  this.to_i = float_to_i;
+  this.to_n = float_to_n;
+  this.to_s = float_to_s;
+}
+
 // -------------------------
 
 
@@ -199,10 +247,13 @@ function functionName(object){
   return new rbSys.String(rawName.slice(0, pos));
 }
 
-function rbType(datatype){
+function rbType(rawType){
   var rtype = {String: 'String', Array: 'Array', Number: 'Fixnum', 
-    Object: 'Hash', Function: 'Proc'};
-  return rtype[functionName(datatype).to_s()];  
+    Object: 'Hash', Function: 'Proc', Float: 'Float'};
+  type = functionName(rawType).to_s()
+  if (type == 'Number' && parseInt(rawType) != rawType) type = 'Float';
+  
+  return rtype[type];  
 }
 
 // equivalent to Hash[]
@@ -242,6 +293,11 @@ function pw(raw_o){
 
 function puts(s){console.log(s);}
 
+function r(obj){
+  objects = {String: 'to_s', Fixnum: 'to_i', Float: 'to_f'};
+  return objects[obj.class().to_s()];
+}
+
 function rand(upper){ return rb.Random.new().rand(upper); }
 function rbEval(){
   
@@ -266,7 +322,7 @@ rbSys = {  Array: rbArray, String: rbString, Range: rbRange,
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
         NilClass: rbNilClass, Enumerator: rbEnumerator, Random: rbRandom,
-        Proc: rbProc, RegExp: rbRegExp
+        Proc: rbProc, RegExp: rbRegExp, Method: rbMethod, Float: rbFloat
      }
 
         //
@@ -277,7 +333,7 @@ rbList = new rbSys.Hash(rbSys);
 //o(['])a
 //pw('Object Time nilClass').each(function(x){ rbList.delete(x);});
 rbList.delete('Object');
-rbList.delete('Time');
+//rbList.delete('Time');
 //rbList.delete('NilClass');
 
 rbSys.Array.prototype.each = enumerable_each;
@@ -310,6 +366,7 @@ rbRandomObj = {new: function(seed){return new rbSys.Random(seed)}};
 rb = {  Array: rbArrayObj, String: rbStringObj, Range: rbRangeObj, 
         Hash: rbHashObj, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObjectObj, MatchData: rbMatchData, Time: rbTime,
-        NilClass: rbNilClass, Enumerator: rbEnumeratorObj, Random: rbRandomObj
+        NilClass: rbNilClass, Enumerator: rbEnumeratorObj, Random: rbRandomObj,
+        Float: rbFloat
      }
 

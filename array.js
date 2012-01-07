@@ -1,57 +1,43 @@
 // file: array.js
 
 function array_at(raw_index){ 
-  var index = (raw_index >= 0) ? raw_index : this.array.length + raw_index;
-  var r = this.array[index]; 
+  var index = (raw_index >= 0) ? raw_index : this.temp_array.length + raw_index;
+  var r = this.temp_array[index]; 
   return r != null ? r : nil
 }
 
-function array_clear(){ this.array = [];}
-function array_clone(){ return  o(this.array); }
+function array_clear(){ this.temp_array = [];}
+function array_clone(){ return  o(this.temp_array); }
 function array_compact(){ return this.reject(function(x){return x == nil;});}
-function array_compact_p(){ this.array = this.compact().array; return this;}
+function array_compact_p(){ this.temp_array = this.compact().array; return this;}
 
 function array_concat(rawObj){
   var item = o(rawObj);
   if (functionName(item).to_s() == 'rbArray'){
-    var temp_array = this.array;
+    var temp_array = this.temp_array;
     item.each(function(x){
-      puts ('x: ' + x);
       temp_array = temp_array.concat(x);
     });
-    this.array = temp_array;
+    this.temp_array = temp_array;
   }
   else {
-    this.array = this.array.concat(item);
+    this.temp_array = this.temp_array.concat(item);
   }
   return this;
 }
 
 function array_delete_at(i){ 
-  var r = this.array.splice(i,1)[0];
+  var r = this.temp_array.splice(i,1)[0];
   return r;
 }
 
-function array_detect(f){  
-  var r = [], bFlag = false, i = 0;    
-  do { 
-    if (f(this.array[i]) == true) {
-      r = this.array[i];
-      bFlag = true;
-    }
-    i++;
-  }  while (bFlag == false && i < this.array.length)  
-  type = rbType(r);
-  return type ? rb[type].new(r) : r;
-}
-
 function array_each(f){  
-  puts('array_each');
+
   var a = [];
-  for (var i = 0; i < this.array.length; i++) {
-    a.push(f(this.array[i]));
+  for (var i = 0; i < this.temp_array.length; i++) {
+    a.push(f(this.temp_array[i]));
   }
-  puts('array_each returning ' + a)
+
   return a;
 }
 
@@ -60,11 +46,18 @@ function array_empty(){
 }
 
 function array_flatten(){return 'still to do!';}
-function array_last(){return this.array[this.array.length - 1];}
-function array_length(){return this.array.length;}
+function array_last(){return this.temp_array[this.temp_array.length - 1];}
+function array_length(){return this.temp_array.length;}
 
 function array_include(val){
-  return this.array.indexOf(val) >= 0;
+  return this.index(val) != nil;
+}
+
+function array_index(val){
+  var r = this.map().with_index().detect(function(x){ 
+    return x.first().to_n() == val; 
+  });
+  return r.length() > 0 ? r.last() : nil;
 }
 
 // -- inject related -----------------
@@ -76,14 +69,20 @@ function add(r, x){return r + x;}
 function scan_a(raw_a) {
   var a = [];
   raw_a.each(function(x){
+
     if (typeof x != 'undefined' && functionName(x).to_s() == 'rbArray') {
+
       a.push(scan_a(x));
     }
     else {
-      var type = functionName(x).to_s();      
+      var type = functionName(x).to_s();
+
       if (type != 'undefined'){
-        if (type == 'Number' || (type == 'String' && x[0] == ':'))  { a.push(x);}
-        if (type == 'rbHash' || type == 'rbString' || type == 'rbFixnum') 
+
+        if (type == 'Number' || (type == 'String' && x[0] == ':'))  { 
+          a.push(x);
+        }
+        else if (type == 'rbHash' || type == 'rbString' || type == 'rbFixnum') 
           { a.push(x.inspect()); }
         else { a.push('"' + x + '"'); }
       }
@@ -92,6 +91,7 @@ function scan_a(raw_a) {
   });
   return '[' + a.join(', ') + ']';
 }
+
 
 function array_inspect(){  return scan_a(this);}
 
@@ -107,7 +107,7 @@ function array_join(separator){
   } 
 }
 
-function array_map_p(f){ this.array = this.map(f);  return this;}
+function array_map_p(f){ this.temp_array = this.map(f);  return this;}
 
 function array_partition(f){  
   var a_true = new rbArray(), a_false = new rbArray();
@@ -116,7 +116,7 @@ function array_partition(f){
 }
 
 function array_range(x1,x2){  
-  var a = this.array;
+  var a = this.temp_array;
   var result;  
   if (x2 != -1) {
     x2++;
@@ -128,25 +128,25 @@ function array_range(x1,x2){
   return new rbArray(result);
 }
 
-function array_reject_p(f){ this.array = this.reject(f).array; return this;}
-function array_select_p(f){ this.array = this.select(f).array; return this;}
+function array_reject_p(f){ this.temp_array = this.reject(f).array; return this;}
+function array_select_p(f){ this.temp_array = this.select(f).array; return this;}
 
 function array_shift(count){
   var result;
   if (typeof count == 'undefined') {
-    result = this.array.shift();
+    result = this.temp_array.shift();
   }
   else {
     var a = [];
-    for (var i = 0; i < count; i++){a.push(this.array.shift());}
+    for (var i = 0; i < count; i++){a.push(this.temp_array.shift());}
     result = o(a);
   }  
   return result;  
 }
 
-function array_size(){ return this.array.length;}
+function array_size(){ return this.temp_array.length;}
 function array_slice(x1,x2){  
-  var a = this.array;
+  var a = this.temp_array;
   var result;  
   if (typeof x1 == 'undefined') return nil;
   if (typeof x2 == 'undefined') {
@@ -163,12 +163,12 @@ function array_slice_p(x1,x2){
   if (typeof x1 == 'undefined') return nil ;
   if (typeof x2 == 'undefined') {
     result = this.slice(x1);
-    this.array.splice(x1, x1+1);
+    this.temp_array.splice(x1, x1+1);
   }
   else {
     if (x2 > x1) {
       result= this.slice(x1, x2);
-      this.array.splice(x1, x1+x2);
+      this.temp_array.splice(x1, x1+x2);
     }
     else {return x2 < 0 ? nil : '';}
   }  
@@ -178,36 +178,37 @@ function array_slice_p(x1,x2){
 function array_pop(count){
   var result;
   if (typeof count == 'undefined') {
-    result = this.array.pop();
+    result = this.temp_array.pop();
   }
   else {
     var a = [];
-    for (var i = 0; i < count; i++){a.push(this.array.pop());}
+    for (var i = 0; i < count; i++){a.push(this.temp_array.pop());}
     result = new rbArray(a);
   }    
   return result;
 }
 
 function array_push(){
-  for (var x in arguments){this.array.push(arguments[x]);}  
+  for (var x in arguments){this.temp_array.push(arguments[x]);}  
+  return this;
 }
 
-function array_reverse(){ return rb.Array.new(this.array.reverse());}
+function array_reverse(){ return rb.Array.new(this.temp_array.reverse());}
 
 function array_unshift(){
-  for (x in arguments){this.array.unshift(arguments[x]);}  
+  for (x in arguments){this.temp_array.unshift(arguments[x]);}  
 }
 
 function array_set(index, value){
-  this.array[index] = value;  
+  this.temp_array[index] = value;  
 }
 
-function array_to_a(){  return this.array;}
+function array_to_a(){  return this.temp_array;}
 
 function array_with_index(f){  
   var basic_a = [];
-  for (var i = 0; i < this.array.length; i++) {
-    basic_a.push(f(this.array[i], i));
+  for (var i = 0; i < this.temp_array.length; i++) {
+    basic_a.push(f(this.temp_array[i], i));
   }
   var a = new rbArray(basic_a);
   return a;  
@@ -236,11 +237,11 @@ function rbArray(i, obj){
   this.compact_p = array_compact_p;
   this.concat = array_concat;
   this.delete_at = array_delete_at;
-  this.detect = array_detect;
   this.empty = array_empty;
   this.custom_each = array_each;    
   this.flatten = array_flatten;
-  this.include = array_include;  
+  this.include = array_include;
+  this.index = array_index;
   this.inspect = array_inspect;
   this.join = array_join;
   this.last = array_last;
@@ -260,30 +261,29 @@ function rbArray(i, obj){
   this.size = array_size;
   this.slice = array_slice;
   this.slice_p = array_slice_p;  
-  this.temp_array = nil;
   this.to_a = array_to_a;  
   this.unshift = array_unshift;
   this.zip = array_zip;
      
-  if (typeof i == 'undefined') this.array = new Array;
+  if (typeof i == 'undefined') this.temp_array = new Array;
   else {
     if (functionName(i).to_s() == 'Array' || functionName(i).to_s() == 'NodeList') {
       if (typeof obj != 'undefined') {        
-        this.array = new Array;
-        for (var j = 0; j < i - 1; j++) { this.array[j] = obj;}
+        this.temp_array = new Array;
+        for (var j = 0; j < i - 1; j++) { this.temp_array[j] = obj;}
       }
       else {
-        this.array = new Array;
+        this.temp_array = new Array;
         for (var j = 0; j < i.length; j++) {
           var item = (functionName(i[j]).to_s() == 'Object' || 
             functionName(i[j]).to_s() == 'String' ||
             functionName(i[j]).to_s() == 'Array' || 
             functionName(i[j]).to_s() == 'Number') ? o(i[j]) : i[j];
-          this.array.push(item);
+          this.temp_array.push(item);
         }
       }
     }
-    else this.array = new Array(i);
+    else this.temp_array = new Array(i);
   }  
 }
 

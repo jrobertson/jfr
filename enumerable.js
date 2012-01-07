@@ -8,15 +8,28 @@ function enumerable_count(){
   }
 }
 
+function enumerable_detect(f){  
+  var r = [], bFlag = false, i = 0;    
+  do { 
+    if (f(this.temp_array[i]) == true) {
+      r = this.temp_array[i];
+      bFlag = true;
+    }
+    i++;
+  }  while (bFlag == false && i < this.temp_array.length)  
+  type = rbType(r);
+  return type ? rb[type].new(r) : r;
+}
+
 function enumerable_each(f){  
-  puts ('enumerable_each');
+  
   if (typeof f == 'undefined') {  
     var desc = this.inspect() + ':each';
     this.temp_array = this.to_a();
     return new rbSys.Enumerator(this, desc);
   }  
   else {
-    this.temp_array = o(this.custom_each(f)); 
+    this.array = o(this.custom_each(f)); 
     return this;
   }  
 }
@@ -47,9 +60,9 @@ function enumerable_each_cons(increment, f){
       return obj_a.range(i, i + increment - 1);
     });
     var desc = this.inspect() + ':each_cons(' + increment + ')';
-    this.temp_array = a;
+    this.temp_array = a.to_a();
     this.last_method = 'each';
-    return rb.Enumerator.new(a, desc);
+    return rb.Enumerator.new(this, desc);
   }
   else {
     obj_a.range(0,-2).each().with_index(function(x,i){ 
@@ -67,15 +80,15 @@ function enumerable_first(){
 function enumerable_inject(arg, f){
   var rtype = {String: arg, Object: new rbHash(), Array: new rbArray(arg), Number: arg};
   var result = rtype[functionName(arg).to_s()];
-  this.each(function(x){ result = f(result, x); puts ('x2 inside_enumerable_inject' + result[0]); });
-  puts('result : ' + result[0]);
+  this.each(function(x){ result = f(result, x) });
+
   return result;
 }
 
 function enumerable_map(f){
   if (typeof f == 'function') {
     this.each( function(x){ return f(x); } );
-    return this.temp_array;
+    return this.array;
   }  
   else {
     var desc = this.inspect() + ':map';
@@ -105,7 +118,6 @@ function enumerable_select(f){
   this.each(function(x){ if (f(x) == true) r.push(x); });
   return o(r);
 }
-
 function enumerable_sort(){ 
   this.each();
   var a = this.temp_array;
@@ -117,7 +129,6 @@ function enumerable_sort(){
   }
   return a.sort();
 }
-
 function enumerable_sort_by(f){
   var a2 = this.map().with_index(function(x,i) {
     raw_val = f(x);
@@ -145,6 +156,7 @@ function rbEnumerable(s){
   this.count = enumerable_count;
   this.each = enumerable_each;
   this.each_cons = enumerable_each_cons;
+  this.detect = enumerable_detect;
   this.each_slice = enumerable_each_slice;
   this.first = enumerable_first;
   this.inject = enumerable_inject;  
