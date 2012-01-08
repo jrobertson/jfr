@@ -2,6 +2,7 @@
 
 // global variables
 
+g_break = false; // if true, it will break from the loop
 $apos = '';      // stores the post_match from a regex.
 $backtick = '';  // store the pre_match from a regex.
 $tilde = null;   // return the matchdata object from a regex

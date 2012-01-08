@@ -35,7 +35,9 @@ function array_each(f){
 
   var a = [];
   for (var i = 0; i < this.temp_array.length; i++) {
-    a.push(f(this.temp_array[i]));
+    var item = f(this.temp_array[i]);
+    if (g_break) {g_break = false; break;}
+    a.push(item);
   }
 
   return a;
