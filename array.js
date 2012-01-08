@@ -45,6 +45,25 @@ function array_empty(){
   return this.length < 1
 }
 
+/*
+function scan_equal(a1, a2){
+
+  var result = nil;
+
+  a1.each_with_index(function(x,i){
+    if x.is_a? Array then
+      result = scan_equal(x, a2[i]) || true
+    else
+      match = (x.eql?(a2[i]))
+      (result = false; break) if !match
+      puts 'x:' + x.to_s + ' ' + (match).to_s
+      result = true
+    end
+  end
+
+  result 
+}
+*/
 function array_eql_q(){
   //still to do 08-Jan-2012
 }

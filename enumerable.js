@@ -34,6 +34,20 @@ function enumerable_each(f){
   }  
 }
 
+function enumerable_each_with_index(f){  
+
+  var enum = this.each().with_index();
+  
+  if (typeof f == 'undefined') {  
+    var desc = this.inspect() + ':each_with_index';
+    return new rbSys.Enumerator(enum, desc);
+  }  
+  else {
+    this.array = o(enum.custom_each(f)); 
+    return this;
+  }  
+}
+
 function enumerable_each_slice(gap,f){
   var a = this;  
   if (typeof f == 'undefined') {    
@@ -163,6 +177,7 @@ function rbEnumerable(s){
   this.count = enumerable_count;
   this.each = enumerable_each;
   this.each_cons = enumerable_each_cons;
+  this.each_with_index = enumerable_each_with_index;
   this.detect = enumerable_detect;
   this.each_slice = enumerable_each_slice;
   this.find_index = enumerable_find_index;
