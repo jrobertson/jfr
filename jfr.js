@@ -6,25 +6,26 @@ $apos = '';      // stores the post_match from a regex.
 $backtick = '';  // store the pre_match from a regex.
 $tilde = null;   // return the matchdata object from a regex
 
-function range_each(f){ o(this.array).each(f); }
+function range_each(f){ o(this.temp_array).each(f); }
 
 function step(gap, f){  
   var a = [];
-  for (var i = 0; i < this.array.length; i = i + gap) a.push(this.array[i]);  
+  for (var i = 0; i < this.temp_array.length; i = i + gap) a.push(this.temp_array[i]);  
   if (typeof f == 'undefined') {
     return rb.Enumerator.new(o(a), this.inspect() + ':step(' + gap + ')');
   }
   else  o(a).each(f);
 }
 
-function range_to_a(){  return o(this.array);}
+function range_to_a(){  return o(this.temp_array);}
 
 function rbRange(x1,x2){  
   this.custom_each = range_each;
   this.inspect = function(){ return x1 + '..' + x2;};
   this.step = step;  
-  this.array = [];
-  for (var i = x1; i < x2; i++) this.array.push(i);
+  this.temp_array = [];
+  this.to_a = range_to_a;
+  for (var i = x1; i < x2; i++) this.temp_array.push(i);
 }
 
 
@@ -37,10 +38,16 @@ function fixnum_to_f(){ return parseFloat(this.num); }
 function fixnum_to_i(){ return parseInt(this.num); }
 function fixnum_to_n(){ return this.num; }
 function fixnum_to_s(){ return this.num.toString(); }
-function fixnum_times(){
-  e = rb.Range.new(0,this.num);
-  e.desc = '#<Enumerator: ' + this.num + ':times>';
-  return e;
+function fixnum_times(f){
+  if (typeof f == 'undefined') {
+    var desc = this.inspect() + ':times';
+    var new_a = o(rb.Range.new(0,this.num).to_a());
+    new_a.last_method = 'each';
+    return rb.Enumerator.new(new_a, desc);    
+  }
+  else {
+    rb.Range.new(0,this.num).each(f);
+  }
 }
 
 
@@ -221,7 +228,7 @@ function rbMethod(obj, method_name){
 }
 
 
-function float_inspect(){  return this.to_s(); }
+function float_inspect(){  return this.num; }
 function float_to_f(){ return parseFloat(this.num); }
 function float_to_i(){ return parseInt(this.num); }
 function float_to_n(){ return this.num; }
@@ -230,7 +237,7 @@ function float_to_s(){ return this.num.toString(); }
 
 function rbFloat(val){
   this.inspect = float_inspect;
-  this.num = val;
+  this.num = parseFloat(val);
   this.to_f = float_to_f;
   this.to_i = float_to_i;
   this.to_n = float_to_n;
@@ -333,7 +340,7 @@ rbList = new rbSys.Hash(rbSys);
 //o(['])a
 //pw('Object Time nilClass').each(function(x){ rbList.delete(x);});
 rbList.delete('Object');
-//rbList.delete('Time');
+rbList.delete('Time');
 //rbList.delete('NilClass');
 
 rbSys.Array.prototype.each = enumerable_each;

@@ -54,7 +54,7 @@ function enumerable_each_slice(gap,f){
 }
 
 function enumerable_each_cons(increment, f){
-  var obj_a = o(this.array);
+  var obj_a = o(this.temp_array);
   if (typeof f == 'undefined') {
     var a = obj_a.range(0,-2).map().with_index(function(x,i){ 
       return obj_a.range(i, i + increment - 1);
@@ -69,6 +69,13 @@ function enumerable_each_cons(increment, f){
       f(obj_a.range(i, i + increment - 1));
     });    
   }
+}
+
+function enumerable_find_index(val){
+  var r = this.map().with_index().detect(function(x){ 
+    return x.first().to_n() == val; 
+  });
+  return r.length() > 0 ? r.last() : nil;
 }
 
 function enumerable_first(){
@@ -158,6 +165,7 @@ function rbEnumerable(s){
   this.each_cons = enumerable_each_cons;
   this.detect = enumerable_detect;
   this.each_slice = enumerable_each_slice;
+  this.find_index = enumerable_find_index;
   this.first = enumerable_first;
   this.inject = enumerable_inject;  
   this.map = enumerable_map;

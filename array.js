@@ -54,10 +54,7 @@ function array_include(val){
 }
 
 function array_index(val){
-  var r = this.map().with_index().detect(function(x){ 
-    return x.first().to_n() == val; 
-  });
-  return r.length() > 0 ? r.last() : nil;
+  return this.find_index(val);
 }
 
 // -- inject related -----------------
@@ -82,7 +79,7 @@ function scan_a(raw_a) {
         if (type == 'Number' || (type == 'String' && x[0] == ':'))  { 
           a.push(x);
         }
-        else if (type == 'rbHash' || type == 'rbString' || type == 'rbFixnum') 
+        else if (type == 'rbHash' || type == 'rbString' || type == 'rbFixnum' || type == 'rbFloat') 
           { a.push(x.inspect()); }
         else { a.push('"' + x + '"'); }
       }
@@ -284,6 +281,7 @@ function rbArray(i, obj){
       }
     }
     else this.temp_array = new Array(i);
-  }  
+  }
+  
 }
 

@@ -197,8 +197,8 @@ function string_slice(x1,x2){
   }
 }
 
-function string_to_f(){return o(parseFloat(this.string));}
-function string_to_i(){return o(parseInt(this.string));}
+function string_to_f(){return parseFloat(this.string);}
+function string_to_i(){return parseInt(this.string);}
 function string_to_n(){return this.string;}
 function string_to_s(){return this.string;}
 function upcase()   { return this.string.toUpperCase(); }
