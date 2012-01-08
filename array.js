@@ -45,11 +45,15 @@ function array_empty(){
   return this.length < 1
 }
 
+function array_eql_q(){
+  //still to do 08-Jan-2012
+}
+
 function array_flatten(){return 'still to do!';}
 function array_last(){return this.temp_array[this.temp_array.length - 1];}
 function array_length(){return this.temp_array.length;}
 
-function array_include(val){
+function array_include_q(val){
   return this.index(val) != nil;
 }
 
@@ -235,9 +239,10 @@ function rbArray(i, obj){
   this.concat = array_concat;
   this.delete_at = array_delete_at;
   this.empty = array_empty;
+  this.eql_q = array_eql_q;
   this.custom_each = array_each;    
   this.flatten = array_flatten;
-  this.include = array_include;
+  this.include_q = array_include_q;
   this.index = array_index;
   this.inspect = array_inspect;
   this.join = array_join;

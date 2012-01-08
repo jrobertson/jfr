@@ -9,6 +9,10 @@ function hash_delete(key){
   return new rbString(value);
 }
 
+function hash_eql_q(val){  
+  // still to do 08-Jan-2012
+}
+
 function hash_key(value){  
   for (keyName in this.hash) {
     if (this.hash[keyName] == value) return o(keyName);
@@ -136,6 +140,7 @@ function rbHash(raw_h){
   this.clear = hash_clear;
   this.clone = hash_clone;
   this.delete = hash_delete;
+  this.eql_q = hash_eql_q;
   this.custom_each = hash_each;
   this.each_pair = hash_each_pair;
   this.find_length = hash_find_length;

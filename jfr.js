@@ -29,40 +29,6 @@ function rbRange(x1,x2){
 }
 
 
-function fixnum_chr(code){
-  return o(String.fromCharCode(this.num));
-}
-
-function fixnum_inspect(){  return this.to_s(); }
-function fixnum_to_f(){ return parseFloat(this.num); }
-function fixnum_to_i(){ return parseInt(this.num); }
-function fixnum_to_n(){ return this.num; }
-function fixnum_to_s(){ return this.num.toString(); }
-function fixnum_times(f){
-  if (typeof f == 'undefined') {
-    var desc = this.inspect() + ':times';
-    var new_a = o(rb.Range.new(0,this.num).to_a());
-    new_a.last_method = 'each';
-    return rb.Enumerator.new(new_a, desc);    
-  }
-  else {
-    rb.Range.new(0,this.num).each(f);
-  }
-}
-
-
-function rbFixnum(val){
-  this.chr = fixnum_chr;
-  this.inspect = fixnum_inspect;
-  this.num = parseInt(val);
-  this.to_f = fixnum_to_f;
-  this.to_i = fixnum_to_i;
-  this.to_n = fixnum_to_n;
-  this.to_s = fixnum_to_s;
-  this.times = fixnum_times;
-}
-
-
 // Ruby Object methods
 
 function object_is_a(name)   {  return (this.class().to_s() == name); }
@@ -227,23 +193,6 @@ function rbMethod(obj, method_name){
   
 }
 
-
-function float_inspect(){  return this.num; }
-function float_to_f(){ return parseFloat(this.num); }
-function float_to_i(){ return parseInt(this.num); }
-function float_to_n(){ return this.num; }
-function float_to_s(){ return this.num.toString(); }
-
-
-function rbFloat(val){
-  this.inspect = float_inspect;
-  this.num = parseFloat(val);
-  this.to_f = float_to_f;
-  this.to_i = float_to_i;
-  this.to_n = float_to_n;
-  this.to_s = float_to_s;
-}
-
 // -------------------------
 
 
@@ -322,6 +271,12 @@ function sortNestedNumber(a, b){
   }
 }
 
+function inheritXtoY(source, target) {
+  new rbSys.Hash(new rbSys[source]).each_pair(function(method_key, method_val){
+    rbSys[target].prototype[method_key] = method_val.f;
+  });  
+}
+
 // -------------------------
 
 
@@ -329,7 +284,8 @@ rbSys = {  Array: rbArray, String: rbString, Range: rbRange,
         Hash: rbHash, Enumerable: rbEnumerable, Fixnum: rbFixnum,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
         NilClass: rbNilClass, Enumerator: rbEnumerator, Random: rbRandom,
-        Proc: rbProc, RegExp: rbRegExp, Method: rbMethod, Float: rbFloat
+        Proc: rbProc, RegExp: rbRegExp, Method: rbMethod, Float: rbFloat,
+        Numeric: rbNumeric, Integer: rbInteger
      }
 
         //
@@ -354,12 +310,13 @@ rbList.keys().each(function(class_key) {
   });
 });
 
-new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class_name){
-  new rbSys.Hash(new rbSys.Enumerable).each_pair(function(method_key, method_val){
-    rbSys[class_name.to_s()].prototype[method_key] = method_val.f;
-  });
+new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class){
+  inheritXtoY('Enumerable', class.to_s());
 });
 
+inheritXtoY('Numeric', 'Integer');
+inheritXtoY('Numeric', 'Float');
+inheritXtoY('Integer', 'Fixnum');
 
 
 rbArrayObj = {new: function(x,y){return new rbSys.Array(x,y)}};

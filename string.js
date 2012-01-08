@@ -9,10 +9,10 @@ function string_concat(obj){
   return this;
 }
 
-function downcase() { return o(this.string.toLowerCase()); }
-
-function string_empty_b() {return this.string.length <= 0 ? true : false;}
-function string_get()  { return this.string; }
+function downcase()        { return o(this.string.toLowerCase()); }
+function string_eql_q(val) { return this.string == val; }
+function string_empty_b()  { return this.string.length <= 0 ? true : false;}
+function string_get()      { return this.string; }
 
 function gsub_base_inner(s2, rawPattern, unknown) {
   return s2.sub_p(rawPattern, unknown);
@@ -209,6 +209,7 @@ function rbString(s){
   this.concat = string_concat;
   this.empty_b = string_empty_b;
   this.downcase = downcase;
+  this.eql_q = string_eql_q;
   this.get = string_get;
   this.gsub = gsub;
   this.gsub_p = gsub_p;
