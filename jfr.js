@@ -196,7 +196,16 @@ function rbMethod(obj, method_name){
   
 }
 
-// -------------------------
+function comparable_between_q(x,y) {
+  v = this.num;
+  return (v >= x && v <= y);
+}
+
+function rbComparable(){
+  this.between_q = comparable_between_q;
+}
+
+// -- end of custom objects -----------------------
 
 
 function functionName(object){
@@ -288,7 +297,9 @@ function inheritXtoY(source, target) {
   });  
 }
 
-// -------------------------
+var mixinXtoY = inheritXtoY;
+
+// -- end of functions -----------------------
 
 
 rbSys = {  Array: rbArray, String: rbString, Range: rbRange, 
@@ -296,7 +307,7 @@ rbSys = {  Array: rbArray, String: rbString, Range: rbRange,
         Object: rbObject, MatchData: rbMatchData, Time: rbTime,
         NilClass: rbNilClass, Enumerator: rbEnumerator, Random: rbRandom,
         Proc: rbProc, RegExp: rbRegExp, Method: rbMethod, Float: rbFloat,
-        Numeric: rbNumeric, Integer: rbInteger
+        Numeric: rbNumeric, Integer: rbInteger, Comparable: rbComparable
      }
 
         //
@@ -321,9 +332,12 @@ new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class){
   inheritXtoY('Enumerable', class.to_s());
 });
 
+mixinXtoY('Comparable', 'Numeric');
+//mixinXtoY('Comparable', 'String');
 inheritXtoY('Numeric', 'Integer');
 inheritXtoY('Numeric', 'Float');
 inheritXtoY('Integer', 'Fixnum');
+
 
 
 rbArrayObj = {new: function(x,y){return new rbSys.Array(x,y)}};
