@@ -35,15 +35,19 @@ function enumerable_each(f){
 }
 
 function enumerable_each_with_index(f){  
-
-  var enum = this.each().with_index();
-  
+ 
   if (typeof f == 'undefined') {  
+    var enum = this.each().with_index();
     var desc = this.inspect() + ':each_with_index';
     return new rbSys.Enumerator(enum, desc);
   }  
   else {
-    this.array = o(enum.custom_each(f)); 
+    
+    var a = [];
+    for (var i = 0; i < this.temp_array.length; i++) {
+      a.push(f(this.temp_array[i], i));
+    }    
+    this.array = o(a);
     return this;
   }  
 }
