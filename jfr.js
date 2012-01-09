@@ -32,6 +32,7 @@ function rbRange(x1,x2){
 
 // Ruby Object methods
 
+function object_clone(){ rb[this.class.to_s()].new(this.to_n()); }
 function object_is_a(name)   {  return (this.class().to_s() == name); }
 function object_method(label){  return new rbSys.Method(this, label); }
 
@@ -59,6 +60,7 @@ function object_to_enum(raw_method){
 function object_class(){ return functionName(this).sub(/^rb/,''); }
 
 function rbObject(){
+  this.clone = object_clone;
   this.is_a = object_is_a;
   this.method = object_method;
   this.methods = object_methods;
@@ -261,6 +263,14 @@ function rbEval(){
 }
 
 function sleep(seconds, f){ setTimeout(f, seconds * 1000); }
+function sprintf(raw_s,a){
+  var s = raw_s.clone();
+  var pattrn = '%s';
+  a.each(function(x){
+    sub_p.apply(s,[pattrn, x.to_s()]);
+  });
+  return s; 
+}
 function sortNumber(a,b) {return a - b;}
 
 function sortNestedNumber(a, b){ 
@@ -305,11 +315,7 @@ rbSys.Array.prototype.select = enumerable_select;
 
 nil = new rbNilClass;
 
-rbList.keys().each(function(class_key) {
-  new rbSys.Hash(new rbSys.Object).each_pair(function(method_key, method_val){
-    rbSys[class_key.to_s()].prototype[method_key] = method_val.f;
-  });
-});
+rbList.keys().each(function(class){ inheritXtoY('Object', class.to_s());});
 
 new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class){
   inheritXtoY('Enumerable', class.to_s());

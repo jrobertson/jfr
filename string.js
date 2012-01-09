@@ -168,6 +168,11 @@ function string_succ(){
   return isNaN(s) ? o(o(s).ord() + 1).chr(): o(parseInt(s) + 1);
 }
 
+function string_succ_p(){
+  this.string = this.succ().to_s();
+  return this;
+}
+
 function sub(rawPattern, unknown) {  
   return sub_replace(this.clone(), rawPattern, unknown);
 }
@@ -177,12 +182,7 @@ function sub_p(rawPattern, unknown) {
 }
 
 function string_sprintf(a){
-  var s = this;
-  var pattrn = '%s';
-  a.each(function(x){
-    sub_p.apply(s,[pattrn, x.to_s()]);
-  });
-  return this;  
+  return sprintf(this, a) ;
 }
 
 function string_slice(x1,x2){
@@ -225,6 +225,7 @@ function rbString(s){
   this.set = string_set;
   this.slice = string_slice;
   this.succ = string_succ;
+  this.succ_p = string_succ_p;
   this.split = string_split;
   this.sprintf = string_sprintf;
   this.sub = sub;

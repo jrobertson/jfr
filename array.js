@@ -60,7 +60,7 @@ function scan_equal(a1, a2){
 
       var match = x.eql_q(a2.at(i).to_i());
 
-      if (match == false){ puts('nomatch'); result = false; g_break = true; }
+      if (match == false){  result = false; g_break = true; }
       else {
         result = true;
       }
@@ -230,6 +230,7 @@ function array_set(index, value){
 }
 
 function array_to_a(){  return this.temp_array;}
+function array_to_n(){  return this.temp_array;}
 
 function array_with_index(f){  
   var basic_a = [];
@@ -288,7 +289,8 @@ function rbArray(i, obj){
   this.size = array_size;
   this.slice = array_slice;
   this.slice_p = array_slice_p;  
-  this.to_a = array_to_a;  
+  this.to_a = array_to_a;
+  this.to_n = array_to_n;  
   this.unshift = array_unshift;
   this.zip = array_zip;
      

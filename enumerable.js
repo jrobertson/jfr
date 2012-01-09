@@ -91,7 +91,7 @@ function enumerable_each_cons(increment, f){
 
 function enumerable_find_index(val){
   var r = this.map().with_index().detect(function(x){ 
-    return x.first().to_n() == val; 
+    return x.first().eql_q(val); 
   });
   return r.length() > 0 ? r.last() : nil;
 }

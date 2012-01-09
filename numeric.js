@@ -20,6 +20,7 @@ function rbFixnum(val){
 
 function float_inspect(){  return this.num; }
 function float_to_f(){ return parseFloat(this.num); }
+function float_to_i(){ return parseInt(this.num); }
 function float_to_s(){ return this.num.toString(); }
 
 
@@ -27,6 +28,7 @@ function rbFloat(val){
   this.inspect = float_inspect;
   this.num = parseFloat(val);
   this.to_f = float_to_f;
+  this.to_i = float_to_i;
   this.to_s = float_to_s;
 }
 
