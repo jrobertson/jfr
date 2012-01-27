@@ -326,10 +326,10 @@ rbSys.Array.prototype.select = enumerable_select;
 
 nil = new rbNilClass;
 
-rbList.keys().each(function(class){ inheritXtoY('Object', class.to_s());});
+rbList.keys().each(function(classx){ inheritXtoY('Object', classx.to_s());});
 
-new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(class){
-  inheritXtoY('Enumerable', class.to_s());
+new rbSys.Array(['Array', 'Hash', 'Range', 'Enumerator']).each(function(classx){
+  inheritXtoY('Enumerable', classx.to_s());
 });
 
 mixinXtoY('Comparable', 'Numeric');

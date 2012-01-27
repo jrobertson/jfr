@@ -36,10 +36,12 @@ function enumerable_each(f){
 
 function enumerable_each_with_index(f){  
  
-  if (typeof f == 'undefined') {  
-    var enum = this.each().with_index();
+  if (typeof f == 'undefined') {
+    
+    var enumx = this.each().with_index();
     var desc = this.inspect() + ':each_with_index';
-    return new rbSys.Enumerator(enum, desc);
+    return new rbSys.Enumerator(enumx, desc);
+    
   }  
   else {
     
