@@ -207,7 +207,7 @@ function rbString(s){
   this.chr = string_chr;
   this.clone = string_clone;
   this.concat = string_concat;
-  this.empty_b = string_empty_b;
+  this.empty_q = string_empty_q;
   this.downcase = downcase;
   this.eql_q = string_eql_q;
   this.get = string_get;

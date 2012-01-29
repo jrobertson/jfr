@@ -271,7 +271,7 @@ function rbArray(i, obj){
   this.concat = array_concat;
   this.delete_at = array_delete_at;
   this.drop = array_drop;
-  this.empty = array_empty;
+  this.empty_q = array_empty;
   this.eql_q = array_eql_q;
   this.custom_each = array_each;    
   this.flatten = array_flatten;

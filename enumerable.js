@@ -2,7 +2,7 @@
 
 function enumerable_any_q(){
   var r = this.select(function(x){ return (x != nil); });
-  return r.length() > 0 ? true : false  
+  return r.empty_q();
 }
 
 function enumerable_count(){  
