@@ -21,6 +21,9 @@ function enumerable_detect(f){
   return type ? rb[type].new(r) : r;
 }
 
+function enumerable_drop(i){
+  return this.obj.drop(i);
+}
 function enumerable_each(f){  
   
   if (typeof f == 'undefined') {  
@@ -183,8 +186,9 @@ function rbEnumerable(s){
   this.count = enumerable_count;
   this.each = enumerable_each;
   this.each_cons = enumerable_each_cons;
-  this.each_with_index = enumerable_each_with_index;
+  this.each_with_index = enumerable_each_with_index;  
   this.detect = enumerable_detect;
+  this.drop = enumerable_drop;
   this.each_slice = enumerable_each_slice;
   this.find_index = enumerable_find_index;
   this.first = enumerable_first;

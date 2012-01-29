@@ -32,7 +32,7 @@ function rbFloat(val){
   this.to_s = float_to_s;
 }
 
-function numeric_eql_q(val){  return this.to_n() == val; }
+function numeric_eql_q(val){  if (val != nil) return this.to_n() == val.to_n(); }
 function numeric_to_n(){ return this.num; }
 
 function rbNumeric(val){

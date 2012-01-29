@@ -31,6 +31,12 @@ function array_delete_at(i){
   return r;
 }
 
+function array_drop(i){
+  tempArray = this.clone();
+  tempArray.shift(i);
+  return tempArray;
+}
+
 function array_each(f){  
 
   var a = [];
@@ -58,7 +64,7 @@ function scan_equal(a1, a2){
     }
     else {
 
-      var match = x.eql_q(a2.at(i).to_i());
+      var match = x.eql_q(a2.at(i));
 
       if (match == false){  result = false; g_break = true; }
       else {
@@ -264,6 +270,7 @@ function rbArray(i, obj){
   this.compact_p = array_compact_p;
   this.concat = array_concat;
   this.delete_at = array_delete_at;
+  this.drop = array_drop;
   this.empty = array_empty;
   this.eql_q = array_eql_q;
   this.custom_each = array_each;    
