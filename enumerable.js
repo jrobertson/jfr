@@ -1,5 +1,10 @@
 // file: enumerable.js
 
+function enumerable_any_q(){
+  var r = this.select(function(x){ return (x != nil); });
+  return r.length() > 0 ? true : false  
+}
+
 function enumerable_count(){  
   if (this.respond_to('size')) return this.size();
   else {
@@ -183,6 +188,7 @@ function enumerable_to_a(){
 }
 
 function rbEnumerable(s){
+  this.any_q = enumerable_any_q;
   this.count = enumerable_count;
   this.each = enumerable_each;
   this.each_cons = enumerable_each_cons;
